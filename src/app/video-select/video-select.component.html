@@ -1,0 +1,47 @@
+<div class="container">
+  <input
+    type="file"
+    style="display: none"
+    #videoInput
+    accept="video/*"
+    (change)="onChangeFileInput('video')"
+  />
+  <button
+    mat-stroked-button
+    color="primary"
+    class="file-select-button"
+    (click)="onClickFileInputButton('video')"
+  >
+    Select video
+  </button>
+
+  <p class="file-name" *ngIf="!video; else videoName">No file selected!</p>
+
+  <ng-template #videoName>
+    <p class="file-name">{{ video?.name }}</p>
+  </ng-template>
+</div>
+
+<div class="container">
+  <input
+    type="file"
+    style="display: none"
+    #fsFileInput
+    accept="funscript"
+    (change)="onChangeFileInput('funscript')"
+  />
+  <button
+    mat-stroked-button
+    color="primary"
+    class="file-select-button"
+    (click)="onClickFileInputButton('funscript')"
+  >
+    Select funscript file
+  </button>
+
+  <p class="file-name" *ngIf="!fs; else fileName">No fs file selected!</p>
+
+  <ng-template #fileName>
+    <p class="file-name">{{ fs?.name }}</p>
+  </ng-template>
+</div>

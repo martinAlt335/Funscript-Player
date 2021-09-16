@@ -1,0 +1,48 @@
+<button
+  mat-stroked-button
+  [disabled]="!buttPlug.HasWebBluetooth"
+  (click)="buttPlug.ConnectInBrowser()"
+>
+  {{
+    buttPlug.HasWebBluetooth ? "Connect In Browser" : "Requires WebBluetooth"
+  }}
+</button>
+
+<ng-container *ngIf="buttPlug.isConnected">
+  <button
+    mat-stroked-button
+    [disabled]="!buttPlug.HasWebBluetooth"
+    (click)="buttPlug.Disconnect()"
+  >
+    Disconnect
+  </button>
+
+  <button
+    mat-stroked-button
+    [disabled]="!buttPlug.HasWebBluetooth"
+    (click)="buttPlug.ToggleScanning()"
+  >
+    {{ buttPlug.isScanning ? "Stop Scanning" : "Start Scanning" }}
+  </button>
+</ng-container>
+
+<span *ngIf="buttPlug.isConnecting">Connecting to Intiface Desktop...</span>
+
+<div class="video-container" *ngIf="videoService.videoURL | async">
+  <vm-player
+    *ngIf="!reload"
+    #player
+    (vmCurrentTimeChange)="onTimeUpdate($event)"
+    muted
+    theme="dark"
+    style="--vm-player-theme: #e86c8b"
+  >
+    <vm-video cross-origin poster="https://media.vimejs.com/poster.png">
+      <source
+        [src]="sanitizer.bypassSecurityTrustUrl(videoService.videoURL.value)"
+        type="video/mp4"
+      />
+    </vm-video>
+    <vm-default-ui></vm-default-ui>
+  </vm-player>
+</div>
