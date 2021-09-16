@@ -6,6 +6,7 @@ import {
   ButtplugWebsocketConnectorOptions,
 } from 'buttplug';
 import { BehaviorSubject } from 'rxjs';
+import {NotificationsService} from '../notifications.service';
 
 enum UiMessageType {
   Error,
@@ -16,26 +17,20 @@ enum UiMessageType {
   providedIn: 'root',
 })
 export class ButtplugService {
+
+  constructor(private notifications: NotificationsService) {
+  }
+
   public client!: ButtplugClient;
   public isConnected = new BehaviorSubject<boolean>(false);
   public isScanning = false;
   public isConnecting = false;
   // 30 second scanning limit
   public scanTime = 30000;
-  public scanOnConnect = true;
   // Blank array when disconnected. Mirrors ButtplugClient device array
   // otherwise. Takes some extra logic to get vue to keep up with it.
-  public uiMessage: [UiMessageType, string] | null = null;
   public cookies: any = (window as any).$cookies;
   public bp!: any;
-
-  private SetErrorMessage(aMsg: string): void {
-    this.uiMessage = [UiMessageType.Error, aMsg];
-  }
-
-  private SetStatusMessage(aMsg: string): void {
-    this.uiMessage = [UiMessageType.Status, aMsg];
-  }
 
   public get HasWebBluetooth(): boolean {
     return (
@@ -68,7 +63,7 @@ export class ButtplugService {
       | ButtplugWebsocketConnectorOptions
   ): Promise<void> {
     this.isConnecting = true;
-    this.client = new ButtplugClient('Buttplug Playground');
+    this.client = new ButtplugClient('Funscript Player');
     this.AddListeners();
     try {
       await this.client.connect(aConnector).catch((e: any) => {
@@ -89,14 +84,10 @@ export class ButtplugService {
   }
 
   private RemoveListeners(): void {
-    // this.client.removeListener('deviceremoveed', this.OnDeviceListChanged);
-    // this.client.removeListener('deviceremoved', this.OnDeviceListChanged);
-    // this.client.removeListener('scanningfinished', this.OnScanningFinished);
-    // this.client.removeListener('disconnect', this.RemoveListeners);
-  }
-
-  private get Connected(): boolean {
-    return this.isConnected.value;
+    this.client.removeListener('deviceremoveed', this.OnDeviceListChanged);
+    this.client.removeListener('deviceremoved', this.OnDeviceListChanged);
+    this.client.removeListener('scanningfinished', this.OnScanningFinished);
+    this.client.removeListener('disconnect', this.RemoveListeners);
   }
 
   private async StartScanning(): Promise<void> {
@@ -132,21 +123,7 @@ export class ButtplugService {
   async Disconnect(): Promise<void> {
     await this.client.disconnect();
     this.RemoveListeners();
-    this.SetStatusMessage('Client disconnected.');
+    this.notifications.showToast('Client disconnected.', 'error');
     this.isConnected.next(false);
-  }
-
-  // private FireChange() {
-  //   const devices = this.clientDevices.filter((x: ButtplugClientDevice) =>
-  //     this.selectedDevices.indexOf(x.Index) !== -1);
-  //   this.$emit("selecteddeviceschange", devices);
-  // }
-
-  private CloseUiMessage(): void {
-    this.uiMessage = null;
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

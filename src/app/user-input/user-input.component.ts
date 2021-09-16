@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import { UserInputService } from './user-input.service';
+import {UserInputService} from './user-input.service';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import {NotificationsService} from '../notifications.service';
+import {FormBuilder} from '@angular/forms';
 
 @UntilDestroy()
 @Component({
@@ -18,13 +20,25 @@ export class UserInputComponent implements OnInit {
   video: File | null = null;
   fs: File | null = null;
 
+  urlForm = this.formBuilder.group({
+    url: 'http://192.168.1.54:8096/emby/videos/598/stream.mp4',
+  });
+
   constructor(
     public videoService: UserInputService,
+    private notifications: NotificationsService,
+    private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.getFSChange();
+  }
+
+  submitURL(): void {
+    console.log(this.urlForm.getRawValue());
+    this.videoService.videoURL.next(this.urlForm.controls.url.value);
   }
 
   onClickFileInputButton(type: 'video' | 'funscript'): void {
@@ -39,20 +53,31 @@ export class UserInputComponent implements OnInit {
 
   async onChangeFileInput(type: 'video' | 'funscript'): Promise<void> {
     if (type === 'video') {
-      const files: { [key: string]: File } =
-        this.videoInput.nativeElement.files;
-      this.video = files[0];
-      const videoURL = URL.createObjectURL(files[0]);
-      return this.videoService.videoURL.next(videoURL);
+      if (this.videoInput.nativeElement.files.length > 0) {
+        const files: { [key: string]: File } =
+          this.videoInput.nativeElement.files;
+        this.video = files[0];
+        const videoURL = URL.createObjectURL(files[0]);
+        this.videoService.videoURL.next(videoURL);
+        return this.notifications.showToast(`Loaded ${files[0].name}`, 'success');
+      } else {
+        return this.notifications.showToast(`Failed to load video.`, 'error');
+      }
     }
 
     if (type === 'funscript') {
-      const files: { [key: string]: File } =
-        this.fsFileInput.nativeElement.files;
-      this.fs = files[0];
-      return await this.fileToJSON(files[0]).then((r) =>
-        this.videoService.funscriptURL.next(r)
-      );
+      if (this.fsFileInput.nativeElement.files.length > 0) {
+        const files: { [key: string]: File } =
+          this.fsFileInput.nativeElement.files;
+        this.fs = files[0];
+        return await this.fileToJSON(files[0]).then((r) => {
+            this.videoService.funscriptURL.next(r);
+            this.notifications.showToast(`Loaded ${files[0].name}`, 'success');
+          }
+        );
+      } else {
+        return this.notifications.showToast(`Failed to load funscript file.`, 'error');
+      }
     }
   }
 

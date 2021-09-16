@@ -2,10 +2,45 @@
   <input
     type="file"
     style="display: none"
+    #fsFileInput
+    accept="funscript"
+    (change)="onChangeFileInput('funscript')"
+  />
+  <br/>
+  <button
+    mat-stroked-button
+    color="primary"
+    class="file-select-button"
+    (click)="onClickFileInputButton('funscript')"
+  >
+    Select funscript file
+  </button>
+
+  <span class="file-name" *ngIf="!fs; else fileName"> No funscript file selected!</span>
+
+  <ng-template #fileName>
+    <span class="file-name"> {{ fs?.name }}</span>
+  </ng-template>
+</div>
+
+<div class="container">
+  <br>
+  <form [formGroup]="urlForm" (ngSubmit)="submitURL()">
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>HLS Video URL</mat-label>
+      <input id="url" type="url" matInput placeholder="Ex. Pizza" formControlName="url">
+    </mat-form-field>
+    <button style="margin-left: 5px" mat-stroked-button type="submit">Load HLS Stream</button>
+  </form>
+
+  <input
+    type="file"
+    style="display: none"
     #videoInput
     accept="video/*"
     (change)="onChangeFileInput('video')"
   />
+  <br/>
   <button
     mat-stroked-button
     color="primary"
@@ -16,35 +51,9 @@
     Select video
   </button>
 
-  <span *ngIf="videoService.funscriptURL.value.length == 0"> Load funscript file first before video.</span>
-
-  <p class="file-name" *ngIf="!video; else videoName">No video selected!</p>
+  <span class="file-name" *ngIf="!video; else videoName"> No video selected!</span>
 
   <ng-template #videoName>
-    <p class="file-name">{{ video?.name }}</p>
-  </ng-template>
-</div>
-
-<div class="container">
-  <input
-    type="file"
-    style="display: none"
-    #fsFileInput
-    accept="funscript"
-    (change)="onChangeFileInput('funscript')"
-  />
-  <button
-    mat-stroked-button
-    color="primary"
-    class="file-select-button"
-    (click)="onClickFileInputButton('funscript')"
-  >
-    Select funscript file
-  </button>
-
-  <p class="file-name" *ngIf="!fs; else fileName">No funscript file selected!</p>
-
-  <ng-template #fileName>
-    <p class="file-name">{{ fs?.name }}</p>
+    <span class="file-name"> {{ video?.name }}</span>
   </ng-template>
 </div>

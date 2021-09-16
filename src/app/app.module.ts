@@ -7,14 +7,23 @@ import { VideoPlayerModule } from './video-player/video-player.module';
 import { MatButtonModule } from '@angular/material/button';
 import { UserInputComponent } from './user-input/user-input.component';
 import { ButtplugComponent } from './buttplug/buttplug.component';
+import { HotToastModule } from '@ngneat/hot-toast';
+import {MatInputModule} from '@angular/material/input';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent, UserInputComponent, ButtplugComponent],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     VideoPlayerModule,
     MatButtonModule,
+    MatInputModule,
+    HotToastModule.forRoot(),
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent],
