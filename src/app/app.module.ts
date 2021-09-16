@@ -5,10 +5,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { VideoPlayerModule } from './video-player/video-player.module';
 import { MatButtonModule } from '@angular/material/button';
-import { VideoSelectComponent } from './video-select/video-select.component';
+import { UserInputComponent } from './user-input/user-input.component';
+import { ButtplugComponent } from './buttplug/buttplug.component';
 
 @NgModule({
-  declarations: [AppComponent, VideoSelectComponent],
+  declarations: [AppComponent, UserInputComponent, ButtplugComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

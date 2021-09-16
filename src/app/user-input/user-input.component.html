@@ -10,12 +10,15 @@
     mat-stroked-button
     color="primary"
     class="file-select-button"
+    [disabled]="videoService.funscriptURL.value.length == 0"
     (click)="onClickFileInputButton('video')"
   >
     Select video
   </button>
 
-  <p class="file-name" *ngIf="!video; else videoName">No file selected!</p>
+  <span *ngIf="videoService.funscriptURL.value.length == 0"> Load funscript file first before video.</span>
+
+  <p class="file-name" *ngIf="!video; else videoName">No video selected!</p>
 
   <ng-template #videoName>
     <p class="file-name">{{ video?.name }}</p>
@@ -39,7 +42,7 @@
     Select funscript file
   </button>
 
-  <p class="file-name" *ngIf="!fs; else fileName">No fs file selected!</p>
+  <p class="file-name" *ngIf="!fs; else fileName">No funscript file selected!</p>
 
   <ng-template #fileName>
     <p class="file-name">{{ fs?.name }}</p>

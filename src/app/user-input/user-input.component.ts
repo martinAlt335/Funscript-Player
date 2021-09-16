@@ -1,19 +1,15 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { VideoSelectService } from './video-select.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import { UserInputService } from './user-input.service';
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
-  selector: 'app-video-select',
-  templateUrl: './video-select.component.html',
-  styleUrls: ['./video-select.component.scss'],
+  selector: 'app-user-input',
+  templateUrl: './user-input.component.html',
+  styleUrls: ['./user-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VideoSelectComponent {
+export class UserInputComponent implements OnInit {
   @ViewChild('videoInput')
   videoInput: any;
   @ViewChild('fsFileInput')
@@ -22,7 +18,14 @@ export class VideoSelectComponent {
   video: File | null = null;
   fs: File | null = null;
 
-  constructor(private videoService: VideoSelectService) {}
+  constructor(
+    public videoService: UserInputService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.getFSChange();
+  }
 
   onClickFileInputButton(type: 'video' | 'funscript'): void {
     if (type === 'video') {
@@ -34,7 +37,7 @@ export class VideoSelectComponent {
     }
   }
 
-  onChangeFileInput(type: 'video' | 'funscript'): void {
+  async onChangeFileInput(type: 'video' | 'funscript'): Promise<void> {
     if (type === 'video') {
       const files: { [key: string]: File } =
         this.videoInput.nativeElement.files;
@@ -47,11 +50,13 @@ export class VideoSelectComponent {
       const files: { [key: string]: File } =
         this.fsFileInput.nativeElement.files;
       this.fs = files[0];
-      this.fileToJSON(files[0]).then((r) => console.log(r));
+      return await this.fileToJSON(files[0]).then((r) =>
+        this.videoService.funscriptURL.next(r)
+      );
     }
   }
 
-  // load user uploaded funscript file into a parsed object.
+  // load user uploaded funscript file into a stringified object.
   private fileToJSON(file: any): Promise<string> {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -60,5 +65,15 @@ export class VideoSelectComponent {
       fileReader.onerror = (error) => reject(error);
       fileReader.readAsText(file);
     });
+  }
+
+  private getFSChange(): void {
+    this.videoService.funscriptURL
+      .pipe(untilDestroyed(this))
+      .subscribe((val) => {
+        if (val) {
+          this.cdr.markForCheck();
+        }
+      });
   }
 }

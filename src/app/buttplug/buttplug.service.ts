@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import {
-  buttplugInit,
   ButtplugClient,
   ButtplugClientDevice,
   ButtplugEmbeddedConnectorOptions,
-  ButtplugWebsocketConnectorOptions, ButtplugDeviceMessageType,
+  ButtplugWebsocketConnectorOptions,
 } from 'buttplug';
-import {BehaviorSubject} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 enum UiMessageType {
   Error,

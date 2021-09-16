@@ -1,33 +1,3 @@
-<button
-  mat-stroked-button
-  [disabled]="!buttPlug.HasWebBluetooth"
-  (click)="buttPlug.ConnectInBrowser()"
->
-  {{
-    buttPlug.HasWebBluetooth ? "Connect In Browser" : "Requires WebBluetooth"
-  }}
-</button>
-
-<ng-container *ngIf="buttPlug.isConnected">
-  <button
-    mat-stroked-button
-    [disabled]="!buttPlug.HasWebBluetooth"
-    (click)="buttPlug.Disconnect()"
-  >
-    Disconnect
-  </button>
-
-  <button
-    mat-stroked-button
-    [disabled]="!buttPlug.HasWebBluetooth"
-    (click)="buttPlug.ToggleScanning()"
-  >
-    {{ buttPlug.isScanning ? "Stop Scanning" : "Start Scanning" }}
-  </button>
-</ng-container>
-
-<span *ngIf="buttPlug.isConnecting">Connecting to Intiface Desktop...</span>
-
 <div class="video-container" *ngIf="videoService.videoURL | async">
   <vm-player
     *ngIf="!reload"
