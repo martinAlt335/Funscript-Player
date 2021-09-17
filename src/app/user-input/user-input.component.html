@@ -43,7 +43,7 @@
     Select video
   </button>
 
-  <span class="file-name" *ngIf="(video | async)?.name !== undefined ; else videoName">
+  <span class="file-name" *ngIf="video.value === undefined; else videoName">
     No video selected!</span
   >
 
