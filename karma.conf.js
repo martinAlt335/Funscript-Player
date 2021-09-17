@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/fs-player'),
+      dir: require('path').join(__dirname, './coverage/funscript-player'),
       subdir: '.',
       reporters: [
         { type: 'html' },
