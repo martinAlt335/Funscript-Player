@@ -7,6 +7,4 @@ import { BehaviorSubject } from 'rxjs';
 export class UserInputService {
   videoURL: BehaviorSubject<string> = new BehaviorSubject<string>('');
   funscriptURL: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
-  constructor() {}
 }

@@ -1,12 +1,18 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,} from '@angular/core';
-import {ButtplugService} from '../buttplug/buttplug.service';
-import {UserInputService} from '../user-input/user-input.service';
-import {DomSanitizer} from '@angular/platform-browser';
-import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {Player} from '@vime/angular';
-import {ButtplugClientDevice, ButtplugDeviceMessageType} from 'buttplug';
-import {BehaviorSubject} from 'rxjs';
-import {NotificationsService} from '../notifications.service';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { ButtplugService } from '../buttplug/buttplug.service';
+import { UserInputService } from '../user-input/user-input.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Player } from '@vime/angular';
+import { ButtplugClientDevice, ButtplugDeviceMessageType } from 'buttplug';
+import { BehaviorSubject } from 'rxjs';
+import { NotificationsService } from '../notifications.service';
 
 @UntilDestroy()
 @Component({
@@ -18,10 +24,17 @@ import {NotificationsService} from '../notifications.service';
 export class VideoPlayerComponent implements OnInit {
   public reload = false;
   @ViewChild('player') player!: Player;
+
+  playerStatus = new BehaviorSubject<{
+    error: boolean;
+    source: 'standard' | 'hls' | null;
+  }>({ error: false, source: null });
+
   private device: false | ButtplugClientDevice = false;
-  activeEvent: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  savedAction: { at: number, pos: number } = {at: 0, pos: 0};
+
   funscript: any;
+  activeEvent: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  savedAction: { at: number; pos: number } = { at: 0, pos: 0 };
   debugNumber = 0;
 
   constructor(
@@ -30,8 +43,7 @@ export class VideoPlayerComponent implements OnInit {
     private notifications: NotificationsService,
     public sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.buttPlug.isConnected.subscribe((isConnected) => {
@@ -53,6 +65,16 @@ export class VideoPlayerComponent implements OnInit {
     this.getVidChange();
   }
 
+  logError(error: 'standard' | 'hls', event: Event): void {
+    console.log(event);
+    if (error === 'standard') {
+      this.notifications.showToast('Video failed to load. Trying HLS.', 'info');
+      this.playerStatus.next({error: true, source: 'standard'});
+    } else {
+      this.notifications.showToast('HLS stream failed. Try another video.', 'error');
+      this.playerStatus.next({error: true, source: 'hls'}); }
+  }
+
   onTimeUpdate(event: CustomEvent<number>): void {
     if (this.activeEvent.value) {
       return;
@@ -67,19 +89,22 @@ export class VideoPlayerComponent implements OnInit {
 
   async sendEvent(currTime: number): Promise<void> {
     if (this.device) {
-      const range = {min: currTime - 50, max: currTime + 50};
+      const range = { min: currTime - 50, max: currTime + 50 };
 
-      // get the index of the action that falls in the bounds of our range
-      const index = this.funscript.actions.findIndex((item: { at: number, pos: number }) => (item.at >= range.min && item.at <= range.max));
+      // get index of action in the bounds of range
+      const index = this.funscript.actions.findIndex(
+        (item: { at: number; pos: number }) =>
+          item.at >= range.min && item.at <= range.max
+      );
 
-      // if match && its not an action that's already run
-      if (index !== -1 && this.funscript.actions[index].at !== this.savedAction.at) {
-
-        if (this.funscript.actions[index - 1] !== undefined) {
+      if ( // if match && not an action that's already run
+        index !== -1 &&
+        this.funscript.actions[index].at !== this.savedAction.at
+      ) {
+        if (this.funscript.actions[index + 1] !== undefined) { // if did not reach end of actions
           this.savedAction = this.funscript.actions[index];
           const set = {
             current: this.funscript.actions[index],
-            previous: this.funscript.actions[index - 1],
             next: this.funscript.actions[index + 1],
           };
 
@@ -88,10 +113,10 @@ export class VideoPlayerComponent implements OnInit {
           if (set) {
             this.activeEvent.next(true);
             this.debugNumber++;
-            console.log(`Action ${this.debugNumber}: Sent position of ${set.current.pos * 0.01} with a duration of ${duration}  `);
+            console.log('Action', this.debugNumber, ': Sent position of', set.current.pos * 0.01, 'with duration of', duration);
             await this.device.linear(set.current.pos * 0.01, duration);
             await this.delay(duration).then(() => {
-              console.log(`Action ${this.debugNumber} done`);
+              console.log('Action', this.debugNumber, 'done.');
               this.activeEvent.next(false);
             });
           }
@@ -109,7 +134,6 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   private canLinear(device: ButtplugClientDevice): boolean {
-    console.log(device.messageAttributes(ButtplugDeviceMessageType.LinearCmd));
     return (
       device.messageAttributes(ButtplugDeviceMessageType.LinearCmd) !==
       undefined
@@ -120,13 +144,18 @@ export class VideoPlayerComponent implements OnInit {
   private getVidChange(): void {
     this.videoService.videoURL.pipe(untilDestroyed(this)).subscribe((val) => {
       if (val) {
-        this.reload = true;
-        this.cdr.markForCheck();
-        this.delay(1000).then(() => {
-          this.reload = false;
-          this.cdr.markForCheck();
-        });
+        this.playerStatus.next({error: false, source: 'standard'});
+        this.reloadPlayer();
       }
+    });
+  }
+
+  private reloadPlayer(): void {
+    this.reload = true;
+    this.cdr.markForCheck();
+    this.delay(1000).then(() => {
+      this.reload = false;
+      this.cdr.markForCheck();
     });
   }
 

@@ -6,17 +6,18 @@
     accept="funscript"
     (change)="onChangeFileInput('funscript')"
   />
-  <br/>
+  <br />
   <button
     mat-stroked-button
-    color="primary"
     class="file-select-button"
     (click)="onClickFileInputButton('funscript')"
   >
     Select funscript file
   </button>
 
-  <span class="file-name" *ngIf="!fs; else fileName"> No funscript file selected!</span>
+  <span class="file-name" *ngIf="!fs; else fileName">
+    No funscript file selected!</span
+  >
 
   <ng-template #fileName>
     <span class="file-name"> {{ fs?.name }}</span>
@@ -24,15 +25,7 @@
 </div>
 
 <div class="container">
-  <br>
-  <form [formGroup]="urlForm" (ngSubmit)="submitURL()">
-    <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label>HLS Video URL</mat-label>
-      <input id="url" type="url" matInput placeholder="Ex. Pizza" formControlName="url">
-    </mat-form-field>
-    <button style="margin-left: 5px" mat-stroked-button type="submit">Load HLS Stream</button>
-  </form>
-
+  <br />
   <input
     type="file"
     style="display: none"
@@ -40,20 +33,47 @@
     accept="video/*"
     (change)="onChangeFileInput('video')"
   />
-  <br/>
+  <br />
   <button
     mat-stroked-button
-    color="primary"
     class="file-select-button"
-    [disabled]="videoService.funscriptURL.value.length == 0"
+    [disabled]="(videoService.funscriptURL | async)?.length == 0"
     (click)="onClickFileInputButton('video')"
   >
     Select video
   </button>
 
-  <span class="file-name" *ngIf="!video; else videoName"> No video selected!</span>
+  <span class="file-name" *ngIf="(video | async)?.name !== undefined ; else videoName">
+    No video selected!</span
+  >
 
   <ng-template #videoName>
-    <span class="file-name"> {{ video?.name }}</span>
+    <span class="file-name"> {{ (video | async)?.name }}</span>
   </ng-template>
+
+  <form
+    [formGroup]="urlForm"
+    (ngSubmit)="submitURL()"
+    (change)="cdr.markForCheck()"
+  >
+    <mat-form-field class="example-full-width" appearance="standard">
+      <mat-label>Video URL</mat-label>
+      <input
+        id="url"
+        type="url"
+        matInput
+        placeholder="Enter a URL"
+        formControlName="url"
+      />
+    </mat-form-field>
+    <button
+      [disabled]="!urlForm.valid || (videoService.funscriptURL | async)?.length == 0"
+      style="margin-left: 5px"
+      mat-stroked-button
+      type="submit"
+    >
+      Load Video
+    </button>
+    <span> Accepts video files and HLS streams.</span>
+  </form>
 </div>
