@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --disable-host-check",
-    "build": "ng build",
+    "build": "ng build --prod",
+    "serve": "lite-server --baseDir=dist/fs-player",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
