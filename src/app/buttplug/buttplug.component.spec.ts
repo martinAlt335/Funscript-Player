@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ButtplugComponent } from './buttplug.component';
+import {ButtplugComponent} from './buttplug.component';
 
 describe('ButtplugComponent', () => {
   let component: ButtplugComponent;

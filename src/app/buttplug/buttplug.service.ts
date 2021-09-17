@@ -1,12 +1,7 @@
-import { Injectable } from '@angular/core';
-import {
-  ButtplugClient,
-  ButtplugClientDevice,
-  ButtplugEmbeddedConnectorOptions,
-  ButtplugWebsocketConnectorOptions,
-} from 'buttplug';
-import { BehaviorSubject } from 'rxjs';
-import { NotificationsService } from '../notifications.service';
+import {Injectable} from '@angular/core';
+import {ButtplugClient, ButtplugClientDevice, ButtplugEmbeddedConnectorOptions, ButtplugWebsocketConnectorOptions,} from 'buttplug';
+import {BehaviorSubject} from 'rxjs';
+import {NotificationsService} from '../notifications.service';
 
 @Injectable({
   providedIn: 'root',

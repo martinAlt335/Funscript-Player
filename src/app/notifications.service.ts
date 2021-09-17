@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { HotToastService } from '@ngneat/hot-toast';
+import {Injectable} from '@angular/core';
+import {HotToastService} from '@ngneat/hot-toast';
 
 @Injectable({
   providedIn: 'root',

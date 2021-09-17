@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { ButtplugService } from './buttplug.service';
+import {ButtplugService} from './buttplug.service';
 
 describe('ButtplugService', () => {
   let service: ButtplugService;

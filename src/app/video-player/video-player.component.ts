@@ -1,18 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { ButtplugService } from '../buttplug/buttplug.service';
-import { UserInputService } from '../user-input/user-input.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Player } from '@vime/angular';
-import { ButtplugClientDevice, ButtplugDeviceMessageType } from 'buttplug';
-import { BehaviorSubject } from 'rxjs';
-import { NotificationsService } from '../notifications.service';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,} from '@angular/core';
+import {ButtplugService} from '../buttplug/buttplug.service';
+import {UserInputService} from '../user-input/user-input.service';
+import {DomSanitizer} from '@angular/platform-browser';
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import {Player} from '@vime/angular';
+import {ButtplugClientDevice, ButtplugDeviceMessageType} from 'buttplug';
+import {BehaviorSubject} from 'rxjs';
+import {NotificationsService} from '../notifications.service';
 
 @UntilDestroy()
 @Component({

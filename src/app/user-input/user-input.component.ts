@@ -1,14 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { UserInputService } from './user-input.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { NotificationsService } from '../notifications.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,} from '@angular/core';
+import {UserInputService} from './user-input.service';
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import {NotificationsService} from '../notifications.service';
+import {FormBuilder, Validators} from '@angular/forms';
 import {BehaviorSubject} from 'rxjs';
 
 @UntilDestroy()
