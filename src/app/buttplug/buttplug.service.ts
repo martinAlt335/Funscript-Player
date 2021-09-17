@@ -1,5 +1,10 @@
 import {Injectable} from '@angular/core';
-import {ButtplugClient, ButtplugClientDevice, ButtplugEmbeddedConnectorOptions, ButtplugWebsocketConnectorOptions,} from 'buttplug';
+import {
+  ButtplugClient,
+  ButtplugClientDevice,
+  ButtplugEmbeddedConnectorOptions,
+  ButtplugWebsocketConnectorOptions,
+} from 'buttplug';
 import {BehaviorSubject} from 'rxjs';
 import {NotificationsService} from '../notifications.service';
 
@@ -66,9 +71,9 @@ export class ButtplugService {
     } finally {
       this.isConnecting = false;
     }
-    this.isConnected.next(true);
-    // If we don't connect successfully, the above line will throw. Assume that
+    // If we don't connect successfully, the above try statement will throw. Assume that
     // we're connected if we get this far.
+    this.isConnected.next(true);
     await this.StartScanning();
   }
 
@@ -108,6 +113,5 @@ export class ButtplugService {
   private OnScanningFinished(): void {
     this.isScanning = false;
   }
-
 
 }

@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ButtplugService} from '../buttplug/buttplug.service';
 import {UserInputService} from '../user-input/user-input.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 import {Player} from '@vime/angular';
-import {ButtplugClientDevice, ButtplugDeviceMessageType} from 'buttplug';
+import {ButtplugClientDevice} from 'buttplug';
 import {BehaviorSubject} from 'rxjs';
 import {NotificationsService} from '../notifications.service';
 
@@ -45,8 +45,6 @@ export class VideoPlayerComponent implements OnInit {
         this.buttPlug.client.on('deviceadded', async () => {
           this.notifications.showToast('Client connected', 'success');
           this.device = this.buttPlug.client.Devices[0];
-          this.canLinear(this.device);
-          await this.device.linear(60 * 0.01, 3.5 * 1000);
         });
 
         this.buttPlug.client.on('deviceremoved', async () => {
@@ -62,7 +60,7 @@ export class VideoPlayerComponent implements OnInit {
   logError(error: 'standard' | 'hls', event: Event): void {
     console.log(event);
     if (error === 'standard') {
-      this.notifications.showToast('Video failed to load. Trying HLS.', 'info');
+      this.notifications.showToast('Video failed to load. Trying HLS...', 'info');
       this.playerStatus.next({error: true, source: 'standard'});
     } else {
       this.notifications.showToast('HLS stream failed. Try another video.', 'error');
@@ -125,13 +123,6 @@ export class VideoPlayerComponent implements OnInit {
 
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  private canLinear(device: ButtplugClientDevice): boolean {
-    return (
-      device.messageAttributes(ButtplugDeviceMessageType.LinearCmd) !==
-      undefined
-    );
   }
 
   // Subscribe to video URL, on change, trigger detection reloading video player w/ new source.
