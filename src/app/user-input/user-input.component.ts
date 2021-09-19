@@ -15,7 +15,7 @@ import {BehaviorSubject} from 'rxjs';
 export class UserInputComponent implements OnInit {
 
   constructor(
-    public videoService: UserInputService,
+    public userInputService: UserInputService,
     private notifications: NotificationsService,
     private formBuilder: FormBuilder,
     public cdr: ChangeDetectorRef
@@ -25,7 +25,6 @@ export class UserInputComponent implements OnInit {
   videoInput: any;
   @ViewChild('fsFileInput')
   fsFileInput: any;
-  fs: File | null = null;
   video = new BehaviorSubject<File | undefined>(undefined);
 
   urlForm = this.formBuilder.group({
@@ -42,7 +41,7 @@ export class UserInputComponent implements OnInit {
   }
 
   private observeFunscriptFile(): void {
-    this.videoService.funscriptURL
+    this.userInputService.funscriptURL
       .pipe(untilDestroyed(this))
       .subscribe((val) => {
         if (val) {
@@ -58,7 +57,7 @@ export class UserInputComponent implements OnInit {
 
   // submit link method
   public submitURL(): void {
-    this.videoService.videoURL.next(this.urlForm.controls.url.value);
+    this.userInputService.videoURL.next(this.urlForm.controls.url.value);
   }
 
   // user upload method
@@ -85,7 +84,7 @@ export class UserInputComponent implements OnInit {
 
         this.video.next(files[0]);
         const videoURL = URL.createObjectURL(files[0]);
-        this.videoService.videoURL.next(videoURL);
+        this.userInputService.videoURL.next(videoURL);
         return this.notifications.showToast(
           `Loaded ${files[0].name}`,
           'success'
@@ -107,10 +106,8 @@ export class UserInputComponent implements OnInit {
           );
         }
 
-        this.fs = files[0];
         return await this.fileToJSON(files[0]).then((r) => {
-          this.videoService.funscriptURL.next(r);
-          this.notifications.showToast(`Loaded ${files[0].name}`, 'success');
+          this.userInputService.updateFunscript(r, files[0].name);
         });
       } else {
         return this.notifications.showToast(
