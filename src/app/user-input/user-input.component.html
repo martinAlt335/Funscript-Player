@@ -15,12 +15,12 @@
     Select funscript file
   </button>
 
-  <span class="file-name" *ngIf="(userInputService.funscriptURL | async)?.name?.length == 0; else fileName">
+  <span class="file-name" *ngIf="(userInputService.funscriptFile | async)?.name?.length == 0; else fileName">
     No funscript file selected!</span
   >
 
   <ng-template #fileName>
-    <span class="file-name"> {{ userInputService.funscriptURL.value.name }}</span>
+    <span class="file-name"> {{ userInputService.funscriptFile.value.name }}</span>
   </ng-template>
 </div>
 
@@ -37,7 +37,7 @@
   <button
     mat-stroked-button
     class="file-select-button"
-    [disabled]="(userInputService.funscriptURL | async)?.name?.length == 0"
+    [disabled]="(userInputService.funscriptFile | async)?.name?.length == 0"
     (click)="onClickFileInputButton('video')"
   >
     Select video
@@ -67,7 +67,7 @@
       />
     </mat-form-field>
     <button
-      [disabled]="!urlForm.valid || (userInputService.funscriptURL | async)?.name?.length == 0"
+      [disabled]="!urlForm.valid || (userInputService.funscriptFile | async)?.name?.length == 0"
       style="margin-left: 5px"
       mat-stroked-button
       type="submit"

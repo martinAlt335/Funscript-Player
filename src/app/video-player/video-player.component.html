@@ -1,4 +1,4 @@
-<div class="video-container" *ngIf="videoService.videoURL | async">
+<div class="video-container" *ngIf="userInputService.videoURL | async">
   <vm-player
     *ngIf="!reload"
     #player
@@ -10,14 +10,14 @@
     <vm-video *ngIf="!(playerStatus | async)?.error; else hls">
       <source
         (error)="logError('standard', $event)"
-        [src]="sanitizer.bypassSecurityTrustUrl(videoService.videoURL.value)"
+        [src]="sanitizer.bypassSecurityTrustUrl(userInputService.videoURL.value)"
         type="video/mp4"
       />
     </vm-video>
 
     <ng-template #hls>
-      <vm-hls (vmError)="logError('hls', $event)" *ngIf="videoService.videoURL.value" version="latest">
-        <source [src]=sanitizer.bypassSecurityTrustUrl(videoService.videoURL.value) type="application/x-mpegURL"/>
+      <vm-hls (vmError)="logError('hls', $event)" *ngIf="userInputService.videoURL.value" version="latest">
+        <source [src]=sanitizer.bypassSecurityTrustUrl(userInputService.videoURL.value) type="application/x-mpegURL"/>
       </vm-hls>
     </ng-template>
 

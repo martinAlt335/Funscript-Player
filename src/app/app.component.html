@@ -1,11 +1,20 @@
 <app-buttplug></app-buttplug>
-<br />
-<br />
+<br/>
+<br/>
 <app-user-input></app-user-input>
-<br />
+<br/>
 <app-video-player></app-video-player>
+
+<ng-container *ngIf="(userInputService.funscriptFile | async)?.file?.actions!.length !== 0">
+  <app-funscript-heatmap
+    [funscript]="userInputService.funscriptFile.value.file"
+    [width]="980"
+    [height]="300"
+  ></app-funscript-heatmap>
+</ng-container>
 
 <a style="position: absolute;
     left: 9px;
     bottom: 1px;
-    font-weight: bold;" href="https://github.com/martinAlt335/funscript-player" rel=noreferrer target="_blank"><p>Github</p></a>
+    font-weight: bold;" href="https://github.com/martinAlt335/funscript-player" rel=noreferrer target="_blank"><p>
+  Github</p></a>

@@ -7,6 +7,8 @@ import {Player} from '@vime/angular';
 import {ButtplugClientDevice} from 'buttplug';
 import {BehaviorSubject} from 'rxjs';
 import {NotificationsService} from '../notifications.service';
+import {delay} from '../utilts';
+import {Funscript} from 'funscript-utils/lib/types';
 
 @UntilDestroy()
 @Component({
@@ -17,6 +19,7 @@ import {NotificationsService} from '../notifications.service';
 })
 export class VideoPlayerComponent implements OnInit {
   public reload = false;
+
   @ViewChild('player') player!: Player;
 
   playerStatus = new BehaviorSubject<{
@@ -26,14 +29,11 @@ export class VideoPlayerComponent implements OnInit {
 
   private device: false | ButtplugClientDevice = false;
 
-  funscript: any;
-  activeEvent: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  savedAction: { at: number; pos: number } = { at: 0, pos: 0 };
-  debugNumber = 0;
+  funscript!: Funscript;
 
   constructor(
     private buttPlug: ButtplugService,
-    public videoService: UserInputService,
+    public userInputService: UserInputService,
     private notifications: NotificationsService,
     public sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef
@@ -68,66 +68,19 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   onTimeUpdate(event: CustomEvent<number>): void {
-    if (this.activeEvent.value) {
+    if (this.buttPlug.activeEvent.value) {
       return;
     }
 
-    if (!this.activeEvent.value) {
-      this.sendEvent(Math.round(event.detail * 1000)).then(() => {
+    if (!this.buttPlug.activeEvent.value) {
+      this.buttPlug.sendEvent(Math.round(event.detail * 1000), this.device, this.funscript).then(() => {
         return;
       });
     }
   }
-
-  async sendEvent(currTime: number): Promise<void> {
-    if (this.device) {
-      const range = { min: currTime - 50, max: currTime + 50 };
-
-      // get index of action in the bounds of range
-      const index = this.funscript.actions.findIndex(
-        (item: { at: number; pos: number }) =>
-          item.at >= range.min && item.at <= range.max
-      );
-
-      if ( // if match && not an action that's already run
-        index !== -1 &&
-        this.funscript.actions[index].at !== this.savedAction.at
-      ) {
-        if (this.funscript.actions[index + 1] !== undefined) { // if did not reach end of actions
-          this.savedAction = this.funscript.actions[index];
-          const set = {
-            current: this.funscript.actions[index],
-            next: this.funscript.actions[index + 1],
-          };
-
-          const duration = set.next.at - set.current.at;
-
-          if (set) {
-            this.activeEvent.next(true);
-            this.debugNumber++;
-            console.log('Action', this.debugNumber, ': Sent position of', set.current.pos * 0.01, 'with duration of', duration);
-            await this.device.linear(set.current.pos * 0.01, duration);
-            await this.delay(duration).then(() => {
-              console.log('Action', this.debugNumber, 'done.');
-              this.activeEvent.next(false);
-            });
-          }
-        }
-      }
-    }
-
-    return this.delay(25).then(() => {
-      this.activeEvent.next(false);
-    });
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   // Subscribe to video URL, on change, trigger detection reloading video player w/ new source.
   private getVidChange(): void {
-    this.videoService.videoURL.pipe(untilDestroyed(this)).subscribe((val) => {
+    this.userInputService.videoURL.pipe(untilDestroyed(this)).subscribe((val) => {
       if (val) {
         this.playerStatus.next({error: false, source: 'standard'});
         this.reloadPlayer();
@@ -138,18 +91,18 @@ export class VideoPlayerComponent implements OnInit {
   private reloadPlayer(): void {
     this.reload = true;
     this.cdr.markForCheck();
-    this.delay(1000).then(() => {
+    delay(1000).then(() => {
       this.reload = false;
       this.cdr.markForCheck();
     });
   }
 
   private getFSChange(): void {
-    this.videoService.funscriptURL
+    this.userInputService.funscriptFile
       .pipe(untilDestroyed(this))
       .subscribe((val) => {
         if (val) {
-          this.funscript = val;
+          this.funscript = val.file as unknown as Funscript;
         }
       });
   }

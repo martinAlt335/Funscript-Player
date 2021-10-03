@@ -11,6 +11,7 @@ import {MatInputModule} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {FunscriptHeatmapModule} from './funscript-heatmap/funscript-heatmap.module';
 
 @NgModule({
   declarations: [AppComponent, UserInputComponent, ButtplugComponent],
@@ -24,6 +25,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     FormsModule,
     ReactiveFormsModule,
     MatCheckboxModule,
+    FunscriptHeatmapModule
   ],
   providers: [],
   bootstrap: [AppComponent],

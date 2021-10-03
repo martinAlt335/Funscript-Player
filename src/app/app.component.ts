@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {UserInputService} from './user-input/user-input.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,7 @@ import {Component} from '@angular/core';
 })
 export class AppComponent {
   title = 'funscript-player';
+
+  constructor(public userInputService: UserInputService) {
+  }
 }

@@ -1,19 +1,20 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {NotificationsService} from '../notifications.service';
+import {Funscript} from 'funscript-utils/lib/types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserInputService {
   videoURL: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  funscriptURL = new BehaviorSubject<{ name: string, file: string }>({name: '', file: ''});
+  funscriptFile = new BehaviorSubject<{ name: string, file: Funscript }>({name: '', file: {actions: []}});
 
   constructor(private notifications: NotificationsService) {
   }
 
 
-  updateFunscript(file: string, name: string): void {
+  updateFunscript(file: Funscript, name: string): void {
     let fileName;
     if (name !== undefined) {
 
@@ -24,7 +25,7 @@ export class UserInputService {
       fileName = name;
     } else { fileName = 'funscript file'; }
 
-    this.funscriptURL.next({name: fileName, file});
+    this.funscriptFile.next({name: fileName, file});
     this.notifications.showToast(`Loaded ${fileName}`, 'success');
   }
 }

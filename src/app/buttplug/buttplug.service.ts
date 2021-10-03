@@ -7,6 +7,8 @@ import {
 } from 'buttplug';
 import {BehaviorSubject} from 'rxjs';
 import {NotificationsService} from '../notifications.service';
+import {delay} from '../utilts';
+import {Funscript} from 'funscript-utils/lib/types';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +21,10 @@ export class ButtplugService {
   public isScanning = false;
   public isConnecting = false;
   public scanTime = 30000; // 30 second scanning limit
+
+  activeEvent: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  savedAction: { at: number; pos: number } = { at: 0, pos: 0 };
+  debugNumber = 0;
 
   get HasWebBluetooth(): boolean {
     return (
@@ -113,5 +119,51 @@ export class ButtplugService {
   private OnScanningFinished(): void {
     this.isScanning = false;
   }
+
+  public async sendEvent(currTime: number, device: false | ButtplugClientDevice, funscript: Funscript): Promise<void> {
+    if (device) {
+      const range = { min: currTime - 50, max: currTime + 50 };
+
+      console.log(range);
+
+
+      // get index of action in the bounds of range
+      const index = funscript.actions.findIndex(
+        (item: { at: number; pos: number }) =>
+          item.at >= range.min && item.at <= range.max
+      );
+
+      if ( // if match && not an action that's already run
+        index !== -1 &&
+        funscript.actions[index].at !== this.savedAction.at
+      ) {
+        if (funscript.actions[index + 1] !== undefined) { // if did not reach end of actions
+          this.savedAction = funscript.actions[index];
+          const set = {
+            current: funscript.actions[index],
+            next: funscript.actions[index + 1],
+          };
+
+          const duration = set.next.at - set.current.at;
+
+          if (set) {
+            this.activeEvent.next(true);
+            this.debugNumber++;
+            console.log('Action', this.debugNumber, ': Sent position of', set.current.pos * 0.01, 'with duration of', duration);
+            await device.linear(set.current.pos * 0.01, duration);
+            await delay(duration).then(() => {
+              console.log('Action', this.debugNumber, 'done.');
+              this.activeEvent.next(false);
+            });
+          }
+        }
+      }
+    }
+
+    return delay(25).then(() => {
+      this.activeEvent.next(false);
+    });
+  }
+
 
 }

@@ -4,6 +4,7 @@ import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 import {NotificationsService} from '../notifications.service';
 import {FormBuilder, Validators} from '@angular/forms';
 import {BehaviorSubject} from 'rxjs';
+import {Funscript} from 'funscript-utils/lib/types';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +42,7 @@ export class UserInputComponent implements OnInit {
   }
 
   private observeFunscriptFile(): void {
-    this.userInputService.funscriptURL
+    this.userInputService.funscriptFile
       .pipe(untilDestroyed(this))
       .subscribe((val) => {
         if (val) {
@@ -106,8 +107,9 @@ export class UserInputComponent implements OnInit {
           );
         }
 
-        return await this.fileToJSON(files[0]).then((r) => {
-          this.userInputService.updateFunscript(r, files[0].name);
+        return await this.fileToJSON(files[0]).then((r: string) => {
+          const funscript: Funscript = (r as unknown as Funscript);
+          this.userInputService.updateFunscript(funscript, files[0].name);
         });
       } else {
         return this.notifications.showToast(
