@@ -26,6 +26,7 @@
     "@ngneat/until-destroy": "^8.1.4",
     "@vime/angular": "^5.0.33",
     "buttplug": "^1.0.10",
+    "funscript-utils": "^1.1.3",
     "prettier": "^2.4.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
