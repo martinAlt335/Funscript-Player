@@ -50,7 +50,6 @@ export class FunscriptHeatmapComponent implements AfterViewInit {
 
     this.userInputService.funscriptFile.pipe(untilDestroyed(this)).subscribe((val) => {
       if (val) {
-        console.log('dasd');
         this.generateHeatMap(this.funscript, this.width, this.height);
       }
     });

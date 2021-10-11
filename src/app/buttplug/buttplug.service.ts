@@ -9,12 +9,13 @@ import {BehaviorSubject} from 'rxjs';
 import {NotificationsService} from '../notifications.service';
 import {delay} from '../utilts';
 import {Funscript} from 'funscript-utils/lib/types';
+import {StateService} from '../state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ButtplugService {
-  constructor(private notifications: NotificationsService) {}
+  constructor(private state: StateService, private notifications: NotificationsService) {}
 
   public client!: ButtplugClient;
   public isConnected = new BehaviorSubject<boolean>(false);
@@ -123,16 +124,11 @@ export class ButtplugService {
   public async sendEvent(currTime: number, device: false | ButtplugClientDevice, funscript: Funscript): Promise<void> {
     if (device) {
       const range = { min: currTime - 50, max: currTime + 50 };
-
-      console.log(range);
-
-
       // get index of action in the bounds of range
       const index = funscript.actions.findIndex(
         (item: { at: number; pos: number }) =>
           item.at >= range.min && item.at <= range.max
       );
-
       if ( // if match && not an action that's already run
         index !== -1 &&
         funscript.actions[index].at !== this.savedAction.at
@@ -147,13 +143,18 @@ export class ButtplugService {
           const duration = set.next.at - set.current.at;
 
           if (set) {
+            if (!this.state.isProd) {
+              console.log(range);
+              this.debugNumber++;
+              console.log('Action', this.debugNumber, ': Sent position of', set.current.pos * 0.01, 'with duration of', duration);
+            }
             this.activeEvent.next(true);
-            this.debugNumber++;
-            console.log('Action', this.debugNumber, ': Sent position of', set.current.pos * 0.01, 'with duration of', duration);
             await device.linear(set.current.pos * 0.01, duration);
             await delay(duration).then(() => {
-              console.log('Action', this.debugNumber, 'done.');
               this.activeEvent.next(false);
+              if (!this.state.isProd) {
+                console.log('Action', this.debugNumber, 'done.');
+              }
             });
           }
         }
