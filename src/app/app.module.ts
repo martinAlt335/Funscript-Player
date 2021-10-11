@@ -12,21 +12,24 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {FunscriptHeatmapModule} from './funscript-heatmap/funscript-heatmap.module';
+import { ThemeToggleButtonComponent } from './theme-toggle-button/theme-toggle-button.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
-  declarations: [AppComponent, UserInputComponent, ButtplugComponent],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    VideoPlayerModule,
-    MatButtonModule,
-    MatInputModule,
-    HotToastModule.forRoot(),
-    FormsModule,
-    ReactiveFormsModule,
-    MatCheckboxModule,
-    FunscriptHeatmapModule
-  ],
+  declarations: [AppComponent, UserInputComponent, ButtplugComponent, ThemeToggleButtonComponent],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        VideoPlayerModule,
+        MatButtonModule,
+        MatInputModule,
+        HotToastModule.forRoot(),
+        FormsModule,
+        ReactiveFormsModule,
+        MatCheckboxModule,
+        FunscriptHeatmapModule,
+        MatSlideToggleModule
+    ],
   providers: [],
   bootstrap: [AppComponent],
 })

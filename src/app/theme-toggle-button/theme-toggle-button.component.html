@@ -1,0 +1,4 @@
+<mat-slide-toggle
+  [checked]="(themeService.colorScheme | async) === 'dark'"
+  (click)="themeService.switch()"
+>Dark mode</mat-slide-toggle>

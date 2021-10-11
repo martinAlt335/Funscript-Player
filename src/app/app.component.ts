@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {UserInputService} from './user-input/user-input.service';
+import {ThemeService} from './theme.service';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,7 @@ import {UserInputService} from './user-input/user-input.service';
 export class AppComponent {
   title = 'funscript-player';
 
-  constructor(public userInputService: UserInputService) {
+  constructor(public userInputService: UserInputService, private themeService: ThemeService) {
+    this.themeService.load();
   }
 }
