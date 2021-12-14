@@ -36,7 +36,7 @@
               }
             ],
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+              "./node_modules/ng-zorro-antd/ng-zorro-antd.dark.min.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -59,8 +59,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1.5mb"
+                  "maximumWarning": "1mb",
+                  "maximumError": "1.8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -100,7 +100,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+              "./node_modules/ng-zorro-antd/ng-zorro-antd.dark.min.css",
               "src/styles.scss"
             ],
             "scripts": []
