@@ -8,5 +8,9 @@ import {ThemeService} from '../theme.service';
 })
 export class ThemeToggleButtonComponent {
   constructor(public themeService: ThemeService) {
+    themeService.colorScheme.subscribe((val) => {
+      val === 'dark' ? this.switchValue = true : this.switchValue = false;
+    });
   }
+  switchValue = false;
 }

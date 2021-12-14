@@ -1,22 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import "~@angular/material/core/theming/palette";
-@import "~@angular/material/core/theming/theming";
-@import "~@angular/material/core/theming/all-theme";
+@import "~ng-zorro-antd/ng-zorro-antd.dark.css";
 
-$app-primary: mat-palette($mat-light-blue);
-$app-accent: mat-palette($mat-light-blue);
-$app-warn: mat-palette($mat-red);
-
-$theme-dark: mat-dark-theme($app-primary, $app-accent, $app-warn);
-$theme-light: mat-light-theme($app-primary, $app-accent, $app-warn);
-
-.color-scheme-dark {
-  @include angular-material-theme($theme-dark);
-  color: white;
-  background-color: #181818;
-}
-
-.color-scheme-light {
-  @include angular-material-theme($theme-light);
+nz-card > div {
+  padding-top: 0!important
 }

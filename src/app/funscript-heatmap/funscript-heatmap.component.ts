@@ -1,17 +1,26 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  ViewChild
+} from '@angular/core';
 import {Funscript} from 'funscript-utils/lib/types';
 import {HeatmapOptions, renderHeatmap} from 'funscript-utils/lib/funMapper';
 import {UserInputService} from '../user-input/user-input.service';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {ButtplugService} from "../buttplug/buttplug.service";
-import {ButtplugClientDevice} from "buttplug";
-import {NotificationsService} from "../notifications.service";
+import {ButtplugService} from '../buttplug/buttplug.service';
+import {ButtplugClientDevice} from 'buttplug';
+import {NotificationsService} from '../notifications.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-funscript-heatmap',
   templateUrl: './funscript-heatmap.component.html',
   styleUrls: ['./funscript-heatmap.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FunscriptHeatmapComponent implements AfterViewInit {
   public reload = false;
@@ -48,15 +57,15 @@ export class FunscriptHeatmapComponent implements AfterViewInit {
       }
     });
 
-    this.userInputService.funscriptFile.pipe(untilDestroyed(this)).subscribe((val) => {
+    this.userInputService.funscriptFile.pipe(untilDestroyed(this)).subscribe(async (val) => {
       if (val) {
-        this.generateHeatMap(this.funscript, this.width, this.height);
+        await this.generateHeatMap(this.funscript, this.width, this.height);
+        this.cdr.markForCheck();
       }
     });
   }
 
   async startFunscript(): Promise<void> {
-    console.log(this.device);
     if (this.device) {
       while (this.funscript.actions[this.funscript.actions.length - 1].at > this.value) {
         // await new Promise((resolve) => setTimeout(resolve, 50)).then(async () => {
@@ -72,16 +81,21 @@ export class FunscriptHeatmapComponent implements AfterViewInit {
     }
   }
 
-  generateHeatMap(
+  async generateHeatMap(
     funscript: Funscript,
     width: number,
     height: number,
     options?: HeatmapOptions
-  ): void {
-    if (options) {
-      renderHeatmap(this.heatmap.nativeElement, funscript, options);
-    } else {
-      renderHeatmap(this.heatmap.nativeElement, funscript);
-    }
+  ): Promise<void> {
+
+    await new Promise((resolve, reject) => {
+      if (options) {
+        renderHeatmap(this.heatmap.nativeElement, funscript, options);
+        setTimeout(resolve, 1000);
+      } else {
+        renderHeatmap(this.heatmap.nativeElement, funscript);
+        setTimeout(resolve, 1000);
+      }
+    });
   }
 }
