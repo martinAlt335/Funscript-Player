@@ -1,6 +1,6 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {UserInputComponent} from './user-input.component';
+import { UserInputComponent } from './user-input.component';
 
 describe('VideoSelectComponent', () => {
   let component: UserInputComponent;

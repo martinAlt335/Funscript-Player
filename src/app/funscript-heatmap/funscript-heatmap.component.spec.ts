@@ -1,6 +1,6 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {FunscriptHeatmapComponent} from './funscript-heatmap.component';
+import { FunscriptHeatmapComponent } from './funscript-heatmap.component';
 
 describe('FunscriptGraphComponent', () => {
   let component: FunscriptHeatmapComponent;

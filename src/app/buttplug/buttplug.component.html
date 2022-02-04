@@ -1,18 +1,22 @@
-<nz-card style="width:600px; margin-top: 25px">
+<nz-card style="width: 600px; margin-top: 25px">
   <div class="grd">
     <button
-      nz-button nzType="primary"
+      nz-button
+      nzType="primary"
       [disabled]="!buttPlug.HasWebBluetooth"
       (click)="buttPlug.ConnectInBrowser()"
     >
       {{
-      buttPlug.HasWebBluetooth ? "Connect In Browser" : "Requires WebBluetooth"
+        buttPlug.HasWebBluetooth
+          ? "Connect In Browser"
+          : "Requires WebBluetooth"
       }}
     </button>
 
     <ng-container>
       <button
-        nz-button nzType="primary"
+        nz-button
+        nzType="primary"
         [disabled]="!(buttPlug.isConnected | async)"
         (click)="buttPlug.Disconnect()"
       >
@@ -20,7 +24,8 @@
       </button>
 
       <button
-        nz-button nzType="primary"
+        nz-button
+        nzType="primary"
         [disabled]="!(buttPlug.isConnected | async)"
         (click)="buttPlug.ToggleScanning()"
       >
@@ -31,6 +36,3 @@
     <span *ngIf="buttPlug.isConnecting">Connecting to device...</span>
   </div>
 </nz-card>
-
-
-

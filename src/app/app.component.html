@@ -1,30 +1,47 @@
 <div style="margin-left: 10px">
-<!--<app-theme-toggle-button style="position: fixed;-->
-<!--    left: 9px;-->
-<!--    bottom: 50px;"></app-theme-toggle-button>-->
-<app-buttplug></app-buttplug>
-<app-user-input></app-user-input>
-<br/>
-<app-video-player></app-video-player>
+  <!--<app-theme-toggle-button style="position: fixed;-->
+  <!--    left: 9px;-->
+  <!--    bottom: 50px;"></app-theme-toggle-button>-->
+  <app-buttplug></app-buttplug>
+  <app-user-input></app-user-input>
+  <br />
+  <app-video-player></app-video-player>
 
-<ng-container *ngIf="(userInputService.funscriptFile | async)?.file?.actions!.length !== 0">
-  <app-funscript-heatmap
-    [funscript]="userInputService.funscriptFile.value.file"
-    [width]="980"
-    [height]="300"
-  ></app-funscript-heatmap>
-</ng-container>
+  <ng-container
+    *ngIf="
+      ((userInputService.funscriptFile | async)?.file?.actions)!.length !== 0
+    "
+  >
+    <app-funscript-heatmap
+      [funscript]="userInputService.funscriptFile.value.file"
+      [width]="980"
+      [height]="300"
+    ></app-funscript-heatmap>
+  </ng-container>
 
-
-<div style="display: grid; position: fixed;
-    left: 9px;
-    bottom: 1px;
-    font-weight: bold; grid-template-columns: 1fr auto">
-  <a style="" href="https://discuss.eroscripts.com/t/web-funscript-player-enjoy-funscript-videos-on-ios-android-web/35346" rel=noreferrer target="_blank"><p>
-    Discussion Forum</p></a>
-  <a style="margin-left: 10px" href="https://github.com/martinAlt335/funscript-player" rel=noreferrer target="_blank"><p>
-    Github</p></a>
-</div>
-
-
+  <div
+    style="
+      display: grid;
+      position: fixed;
+      left: 9px;
+      bottom: 1px;
+      font-weight: bold;
+      grid-template-columns: 1fr auto;
+    "
+  >
+    <a
+      style=""
+      href="https://discuss.eroscripts.com/t/web-funscript-player-enjoy-funscript-videos-on-ios-android-web/35346"
+      rel="noreferrer"
+      target="_blank"
+      ><p>Discussion Forum</p></a
+    >
+    <a
+      style="margin-left: 10px"
+      href="https://github.com/martinAlt335/funscript-player"
+      rel="noreferrer"
+      target="_blank"
+      ><p>Github</p></a
+    >
+  </div>
 </div>

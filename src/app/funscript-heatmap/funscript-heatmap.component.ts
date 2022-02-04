@@ -5,22 +5,22 @@ import {
   Component,
   ElementRef,
   Input,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
-import {Funscript} from 'funscript-utils/lib/types';
-import {HeatmapOptions, renderHeatmap} from 'funscript-utils/lib/funMapper';
-import {UserInputService} from '../user-input/user-input.service';
-import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {ButtplugService} from '../buttplug/buttplug.service';
-import {ButtplugClientDevice} from 'buttplug';
-import {NotificationsService} from '../notifications.service';
+import { Funscript } from 'funscript-utils/lib/types';
+import { HeatmapOptions, renderHeatmap } from 'funscript-utils/lib/funMapper';
+import { UserInputService } from '../user-input/user-input.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ButtplugService } from '../buttplug/buttplug.service';
+import { ButtplugClientDevice } from 'buttplug';
+import { NotificationsService } from '../notifications.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-funscript-heatmap',
   templateUrl: './funscript-heatmap.component.html',
   styleUrls: ['./funscript-heatmap.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FunscriptHeatmapComponent implements AfterViewInit {
   public reload = false;
@@ -34,15 +34,15 @@ export class FunscriptHeatmapComponent implements AfterViewInit {
 
   private device: false | ButtplugClientDevice = false;
 
-  @ViewChild('heatmap', {static: false})
+  @ViewChild('heatmap', { static: false })
   heatmap!: ElementRef;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private buttPlug: ButtplugService,
     private userInputService: UserInputService,
-    private notifications: NotificationsService) {
-  }
+    private notifications: NotificationsService
+  ) {}
 
   ngAfterViewInit(): void {
     this.buttPlug.isConnected.subscribe((isConnected) => {
@@ -57,23 +57,30 @@ export class FunscriptHeatmapComponent implements AfterViewInit {
       }
     });
 
-    this.userInputService.funscriptFile.pipe(untilDestroyed(this)).subscribe(async (val) => {
-      if (val) {
-        await this.generateHeatMap(this.funscript, this.width, this.height);
-        this.cdr.markForCheck();
-      }
-    });
+    this.userInputService.funscriptFile
+      .pipe(untilDestroyed(this))
+      .subscribe(async (val) => {
+        if (val) {
+          await this.generateHeatMap(this.funscript, this.width, this.height);
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   async startFunscript(): Promise<void> {
     if (this.device) {
-      while (this.funscript.actions[this.funscript.actions.length - 1].at > this.value) {
+      while (
+        this.funscript.actions[this.funscript.actions.length - 1].at >
+        this.value
+      ) {
         // await new Promise((resolve) => setTimeout(resolve, 50)).then(async () => {
-          console.log('moved');
-          this.value += this.step;
-          if (!this.buttPlug.activeEvent.value) {
-            await this.buttPlug.sendEvent(Math.round(this.value), this.device, this.funscript).then();
-          }
+        console.log('moved');
+        this.value += this.step;
+        if (!this.buttPlug.activeEvent.value) {
+          await this.buttPlug
+            .sendEvent(Math.round(this.value), this.device, this.funscript)
+            .then();
+        }
         // });
       }
     } else {
@@ -87,7 +94,6 @@ export class FunscriptHeatmapComponent implements AfterViewInit {
     height: number,
     options?: HeatmapOptions
   ): Promise<void> {
-
     await new Promise((resolve, reject) => {
       if (options) {
         renderHeatmap(this.heatmap.nativeElement, funscript, options);

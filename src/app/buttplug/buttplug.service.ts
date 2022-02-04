@@ -1,21 +1,24 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   ButtplugClient,
   ButtplugClientDevice,
   ButtplugEmbeddedConnectorOptions,
   ButtplugWebsocketConnectorOptions,
 } from 'buttplug';
-import {BehaviorSubject} from 'rxjs';
-import {NotificationsService} from '../notifications.service';
-import {delay} from '../utilts';
-import {Funscript} from 'funscript-utils/lib/types';
-import {StateService} from '../state.service';
+import { BehaviorSubject } from 'rxjs';
+import { NotificationsService } from '../notifications.service';
+import { delay } from '../utilts';
+import { Funscript } from 'funscript-utils/lib/types';
+import { StateService } from '../state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ButtplugService {
-  constructor(private state: StateService, private notifications: NotificationsService) {}
+  constructor(
+    private state: StateService,
+    private notifications: NotificationsService
+  ) {}
 
   public client!: ButtplugClient;
   public isConnected = new BehaviorSubject<boolean>(false);
@@ -41,14 +44,23 @@ export class ButtplugService {
 
   private AddListeners(): void {
     this.client.addListener('deviceadded', ButtplugService.OnDeviceListChanged);
-    this.client.addListener('deviceremoved', ButtplugService.OnDeviceListChanged);
+    this.client.addListener(
+      'deviceremoved',
+      ButtplugService.OnDeviceListChanged
+    );
     this.client.addListener('scanningfinished', this.OnScanningFinished);
     this.client.addListener('disconnect', this.RemoveListeners);
   }
 
   private RemoveListeners(): void {
-    this.client.removeListener('deviceremoveed', ButtplugService.OnDeviceListChanged);
-    this.client.removeListener('deviceremoved', ButtplugService.OnDeviceListChanged);
+    this.client.removeListener(
+      'deviceremoveed',
+      ButtplugService.OnDeviceListChanged
+    );
+    this.client.removeListener(
+      'deviceremoved',
+      ButtplugService.OnDeviceListChanged
+    );
     this.client.removeListener('scanningfinished', this.OnScanningFinished);
     this.client.removeListener('disconnect', this.RemoveListeners);
   }
@@ -63,16 +75,19 @@ export class ButtplugService {
       | ButtplugEmbeddedConnectorOptions
       | ButtplugWebsocketConnectorOptions
   ): Promise<void> {
-    this.isConnecting = true;
     this.client = new ButtplugClient('Funscript Player');
     this.AddListeners();
     try {
-      await this.client.connect(aConnector).catch((e: any) => {
-        console.log(e);
-        return;
-      });
+      await this.client
+        .connect(aConnector)
+        .then(() => (this.isConnecting = true))
+        .catch((e: any) => {
+          console.log(e);
+          return;
+        });
     } catch (e) {
       console.log(e);
+      this.isConnecting = false;
       this.RemoveListeners();
       return Promise.reject('test');
     } finally {
@@ -121,7 +136,11 @@ export class ButtplugService {
     this.isScanning = false;
   }
 
-  public async sendEvent(currTime: number, device: false | ButtplugClientDevice, funscript: Funscript): Promise<void> {
+  public async sendEvent(
+    currTime: number,
+    device: false | ButtplugClientDevice,
+    funscript: Funscript
+  ): Promise<void> {
     if (device) {
       const range = { min: currTime - 50, max: currTime + 50 };
       // get index of action in the bounds of range
@@ -129,11 +148,13 @@ export class ButtplugService {
         (item: { at: number; pos: number }) =>
           item.at >= range.min && item.at <= range.max
       );
-      if ( // if match && not an action that's already run
+      if (
+        // if match && not an action that's already run
         index !== -1 &&
         funscript.actions[index].at !== this.savedAction.at
       ) {
-        if (funscript.actions[index + 1] !== undefined) { // if did not reach end of actions
+        if (funscript.actions[index + 1] !== undefined) {
+          // if did not reach end of actions
           this.savedAction = funscript.actions[index];
           const set = {
             current: funscript.actions[index],
@@ -146,7 +167,14 @@ export class ButtplugService {
             if (!this.state.isProd) {
               console.log(range);
               this.debugNumber++;
-              console.log('Action', this.debugNumber, ': Sent position of', set.current.pos * 0.01, 'with duration of', duration);
+              console.log(
+                'Action',
+                this.debugNumber,
+                ': Sent position of',
+                set.current.pos * 0.01,
+                'with duration of',
+                duration
+              );
             }
             this.activeEvent.next(true);
             await device.linear(set.current.pos * 0.01, duration);
@@ -165,6 +193,4 @@ export class ButtplugService {
       this.activeEvent.next(false);
     });
   }
-
-
 }

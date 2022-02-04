@@ -1,10 +1,16 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {UserInputService} from './user-input.service';
-import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {NotificationsService} from '../notifications.service';
-import {FormBuilder, Validators} from '@angular/forms';
-import {BehaviorSubject} from 'rxjs';
-import {Funscript} from 'funscript-utils/lib/types';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { UserInputService } from './user-input.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NotificationsService } from '../notifications.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { Funscript } from 'funscript-utils/lib/types';
 
 @UntilDestroy()
 @Component({
@@ -14,7 +20,6 @@ import {Funscript} from 'funscript-utils/lib/types';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class UserInputComponent implements OnInit {
-
   constructor(
     public userInputService: UserInputService,
     private notifications: NotificationsService,
@@ -29,10 +34,7 @@ export class UserInputComponent implements OnInit {
   video = new BehaviorSubject<File | undefined>(undefined);
 
   urlForm = this.formBuilder.group({
-    url: [
-      {value: null, disabled: true},
-      [Validators.minLength(6)],
-    ],
+    url: [{ value: null, disabled: true }, [Validators.minLength(6)]],
   });
 
   private static getFileExtension(input: string | File): string {
@@ -108,7 +110,7 @@ export class UserInputComponent implements OnInit {
         }
 
         return await this.fileToJSON(files[0]).then((r: string) => {
-          const funscript: Funscript = (r as unknown as Funscript);
+          const funscript: Funscript = r as unknown as Funscript;
           this.userInputService.updateFunscript(funscript, files[0].name);
         });
       } else {

@@ -1,91 +1,114 @@
+<nz-card style="width: 600px; margin-top: 25px">
+  <div class="container">
+    <input
+      type="file"
+      style="display: none"
+      #fsFileInput
+      accept="funscript"
+      (change)="onChangeFileInput('funscript')"
+    />
+    <button
+      nz-button
+      nzType="primary"
+      class="file-select-button"
+      (click)="onClickFileInputButton('funscript')"
+    >
+      Select funscript file
+    </button>
 
-<nz-card style="width:600px; margin-top: 25px">
-<div class="container">
-  <input
-    type="file"
-    style="display: none"
-    #fsFileInput
-    accept="funscript"
-    (change)="onChangeFileInput('funscript')"
-  />
-  <button
-    nz-button nzType="primary"
-    class="file-select-button"
-    (click)="onClickFileInputButton('funscript')"
-  >
-    Select funscript file
-  </button>
+    <br />
 
-  <br/>
+    <span
+      class="file-name"
+      *ngIf="
+        (userInputService.funscriptFile | async)?.name?.length == 0;
+        else fileName
+      "
+    >
+      No funscript file selected!</span
+    >
 
-  <span class="file-name" *ngIf="(userInputService.funscriptFile | async)?.name?.length == 0; else fileName">
-    No funscript file selected!</span
-  >
-
-  <ng-template #fileName>
-    <span class="file-name"> {{ userInputService.funscriptFile.value.name }}</span>
-  </ng-template>
-</div>
-
-<div class="container">
-  <input
-    type="file"
-    style="display: none"
-    #videoInput
-    accept="video/*"
-    (change)="onChangeFileInput('video')"
-  />
-  <br/>
-
-
-  <nz-breadcrumb>
-    <nz-breadcrumb-item>
-      <button
-        nz-button nzType="primary"
-        class="file-select-button"
-        [disabled]="(userInputService.funscriptFile | async)?.name?.length == 0"
-        (click)="onClickFileInputButton('video')"
+    <ng-template #fileName>
+      <span class="file-name">
+        {{ userInputService.funscriptFile.value.name }}</span
       >
-        Select video
-      </button>
-    </nz-breadcrumb-item>
-    <nz-breadcrumb-item>
-      <form
-        style="display: inline-block"
-        nz-form
-        [formGroup]="urlForm"
-        (ngSubmit)="submitURL()"
-        (change)="cdr.markForCheck()"
-      >
-        <nz-form-item>
-          <nz-form-control>
-            <div style="display: grid; grid-template-columns: auto 1fr">
-              <div>
-                <input nz-input name="url" type="url" id="url" placeholder="Enter a URL" formControlName="url">
+    </ng-template>
+  </div>
+
+  <div class="container">
+    <input
+      type="file"
+      style="display: none"
+      #videoInput
+      accept="video/*"
+      (change)="onChangeFileInput('video')"
+    />
+    <br />
+
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <button
+          nz-button
+          nzType="primary"
+          class="file-select-button"
+          [disabled]="
+            (userInputService.funscriptFile | async)?.name?.length == 0
+          "
+          (click)="onClickFileInputButton('video')"
+        >
+          Select video
+        </button>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <form
+          style="display: inline-block"
+          nz-form
+          [formGroup]="urlForm"
+          (ngSubmit)="submitURL()"
+          (change)="cdr.markForCheck()"
+        >
+          <nz-form-item>
+            <nz-form-control>
+              <div style="display: grid; grid-template-columns: auto 1fr">
+                <div>
+                  <input
+                    nz-input
+                    name="url"
+                    type="url"
+                    id="url"
+                    placeholder="Enter a URL"
+                    formControlName="url"
+                  />
+                </div>
+                <div>
+                  <button
+                    [disabled]="
+                      !urlForm.valid ||
+                      (userInputService.funscriptFile | async)?.name?.length ==
+                        0
+                    "
+                    style="margin-left: 5px"
+                    nz-button
+                    nzType="primary"
+                    type="submit"
+                  >
+                    Load Video
+                  </button>
+                </div>
               </div>
-              <div>
-                <button [disabled]="!urlForm.valid || (userInputService.funscriptFile | async)?.name?.length == 0"
-                        style="margin-left: 5px"
-                        nz-button nzType="primary"
-                        type="submit">Load Video
-                </button>
-              </div>
-            </div>
-          </nz-form-control>
-        </nz-form-item>
-      </form>
-    </nz-breadcrumb-item>
-  </nz-breadcrumb>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
 
-  <span class="file-name" *ngIf="video.value === undefined; else videoName">
-    No video selected!</span
-  >
-  <br/>
-  <span> Accepts video files and HLS streams.</span>
-  <ng-template #videoName>
-    <span class="file-name"> {{ (video | async)?.name }}</span>
-  </ng-template>
-
-
-</div>
+    <span class="file-name" *ngIf="video.value === undefined; else videoName">
+      No video selected!</span
+    >
+    <br />
+    <span> Accepts video files and HLS streams.</span>
+    <ng-template #videoName>
+      <span class="file-name"> {{ (video | async)?.name }}</span>
+    </ng-template>
+  </div>
 </nz-card>

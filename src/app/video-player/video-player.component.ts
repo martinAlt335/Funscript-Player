@@ -1,14 +1,20 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {ButtplugService} from '../buttplug/buttplug.service';
-import {UserInputService} from '../user-input/user-input.service';
-import {DomSanitizer} from '@angular/platform-browser';
-import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {Player} from '@vime/angular';
-import {ButtplugClientDevice} from 'buttplug';
-import {BehaviorSubject} from 'rxjs';
-import {NotificationsService} from '../notifications.service';
-import {delay} from '../utilts';
-import {Funscript} from 'funscript-utils/lib/types';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { ButtplugService } from '../buttplug/buttplug.service';
+import { UserInputService } from '../user-input/user-input.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Player } from '@vime/angular';
+import { ButtplugClientDevice } from 'buttplug';
+import { BehaviorSubject } from 'rxjs';
+import { NotificationsService } from '../notifications.service';
+import { delay } from '../utilts';
+import { Funscript } from 'funscript-utils/lib/types';
 
 @UntilDestroy()
 @Component({
@@ -60,11 +66,18 @@ export class VideoPlayerComponent implements OnInit {
   logError(error: 'standard' | 'hls', event: Event): void {
     console.log(event);
     if (error === 'standard') {
-      this.notifications.showToast('Video failed to load. Trying HLS...', 'info');
-      this.playerStatus.next({error: true, source: 'standard'});
+      this.notifications.showToast(
+        'Video failed to load. Trying HLS...',
+        'info'
+      );
+      this.playerStatus.next({ error: true, source: 'standard' });
     } else {
-      this.notifications.showToast('HLS stream failed. Try another video.', 'error');
-      this.playerStatus.next({error: true, source: 'hls'}); }
+      this.notifications.showToast(
+        'HLS stream failed. Try another video.',
+        'error'
+      );
+      this.playerStatus.next({ error: true, source: 'hls' });
+    }
   }
 
   onTimeUpdate(event: CustomEvent<number>): void {
@@ -73,19 +86,23 @@ export class VideoPlayerComponent implements OnInit {
     }
 
     if (!this.buttPlug.activeEvent.value) {
-      this.buttPlug.sendEvent(Math.round(event.detail * 1000), this.device, this.funscript).then(() => {
-        return;
-      });
+      this.buttPlug
+        .sendEvent(Math.round(event.detail * 1000), this.device, this.funscript)
+        .then(() => {
+          return;
+        });
     }
   }
   // Subscribe to video URL, on change, trigger detection reloading video player w/ new source.
   private getVidChange(): void {
-    this.userInputService.videoURL.pipe(untilDestroyed(this)).subscribe((val) => {
-      if (val) {
-        this.playerStatus.next({error: false, source: 'standard'});
-        this.reloadPlayer();
-      }
-    });
+    this.userInputService.videoURL
+      .pipe(untilDestroyed(this))
+      .subscribe((val) => {
+        if (val) {
+          this.playerStatus.next({ error: false, source: 'standard' });
+          this.reloadPlayer();
+        }
+      });
   }
 
   private reloadPlayer(): void {

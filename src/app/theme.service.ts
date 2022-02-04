@@ -1,8 +1,8 @@
-import {Injectable, Renderer2, RendererFactory2} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService {
   private renderer: Renderer2;
@@ -15,7 +15,11 @@ export class ThemeService {
 
   _detectPrefersColorScheme(): void {
     if (window.matchMedia('(prefers-color-scheme)').media !== 'not all') {
-      this.colorScheme.next(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      this.colorScheme.next(
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+      );
     } else {
       this.colorScheme.next('dark');
     }
@@ -37,23 +41,31 @@ export class ThemeService {
 
   load(): void {
     this._getColorScheme();
-    this.renderer.addClass(document.body, this.colorSchemePrefix + this.colorScheme.value);
+    this.renderer.addClass(
+      document.body,
+      this.colorSchemePrefix + this.colorScheme.value
+    );
   }
 
   update(scheme: 'dark' | 'light'): void {
     this._setColorScheme(scheme);
-    this.renderer.removeClass(document.body, this.colorSchemePrefix + (this.colorScheme.value === 'dark' ? 'light' : 'dark'));
+    this.renderer.removeClass(
+      document.body,
+      this.colorSchemePrefix +
+        (this.colorScheme.value === 'dark' ? 'light' : 'dark')
+    );
     this.renderer.addClass(document.body, this.colorSchemePrefix + scheme);
   }
 
   switch(): void {
     if (this.currentActive() === 'dark') {
       this.update('light');
-    } else {this.update('dark'); }
+    } else {
+      this.update('dark');
+    }
   }
 
   currentActive(): string {
     return this.colorScheme.value;
   }
-
 }

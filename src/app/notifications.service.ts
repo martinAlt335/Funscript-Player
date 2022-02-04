@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {HotToastService} from '@ngneat/hot-toast';
+import { Injectable } from '@angular/core';
+import { HotToastService } from '@ngneat/hot-toast';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class NotificationsService {
     }
 
     if (type === 'info') {
-      this.toastService.loading(text, {duration: 3000});
+      this.toastService.loading(text, { duration: 3000 });
     }
 
     if (type === 'success') {
