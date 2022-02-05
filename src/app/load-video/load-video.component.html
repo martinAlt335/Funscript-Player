@@ -1,47 +1,10 @@
-<nz-card style="width: 600px; margin-top: 25px">
-  <div class="container">
-    <input
-      type="file"
-      style="display: none"
-      #fsFileInput
-      accept="funscript"
-      (change)="onChangeFileInput('funscript')"
-    />
-    <button
-      nz-button
-      nzType="primary"
-      class="file-select-button"
-      (click)="onClickFileInputButton('funscript')"
-    >
-      Select funscript file
-    </button>
-
-    <br />
-
-    <span
-      class="file-name"
-      *ngIf="
-        (userInputService.funscriptFile | async)?.name?.length == 0;
-        else fileName
-      "
-    >
-      No funscript file selected!</span
-    >
-
-    <ng-template #fileName>
-      <span class="file-name">
-        {{ userInputService.funscriptFile.value.name }}</span
-      >
-    </ng-template>
-  </div>
-
   <div class="container">
     <input
       type="file"
       style="display: none"
       #videoInput
       accept="video/*"
-      (change)="onChangeFileInput('video')"
+      (change)="onChangeFileInput()"
     />
     <br />
 
@@ -54,7 +17,7 @@
           [disabled]="
             (userInputService.funscriptFile | async)?.name?.length == 0
           "
-          (click)="onClickFileInputButton('video')"
+          (click)="onClickFileInputButton()"
         >
           Select video
         </button>
@@ -63,7 +26,7 @@
         <form
           style="display: inline-block"
           nz-form
-          [formGroup]="urlForm"
+          [formGroup]="userInputService.urlForm"
           (ngSubmit)="submitURL()"
           (change)="cdr.markForCheck()"
         >
@@ -83,7 +46,7 @@
                 <div>
                   <button
                     [disabled]="
-                      !urlForm.valid ||
+                      !userInputService.urlForm.valid ||
                       (userInputService.funscriptFile | async)?.name?.length ==
                         0
                     "
@@ -105,10 +68,11 @@
     <span class="file-name" *ngIf="video.value === undefined; else videoName">
       No video selected!</span
     >
-    <br />
     <span> Accepts video files and HLS streams.</span>
+    <br />
+    <br />
     <ng-template #videoName>
       <span class="file-name"> {{ (video | async)?.name }}</span>
     </ng-template>
+    <app-video-player></app-video-player>
   </div>
-</nz-card>

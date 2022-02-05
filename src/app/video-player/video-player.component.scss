@@ -1,10 +1,6 @@
 /* Default theme. ~960B */
 @import "~@vime/core/themes/default.css";
 
-/* Optional light theme (extends default). ~400B */
-// @import '~@vime/core/themes/light.css';
-
 .video-container {
-  max-width: 980px;
-  width: 100%;
+  width: 550px;
 }

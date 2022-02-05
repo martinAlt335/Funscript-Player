@@ -1,0 +1,23 @@
+<nz-card style="width: 600px; margin-top: 25px">
+
+  <nz-radio-group [ngModel]="mode" (ngModelChange)="handleEvent($event)">
+    <label nz-radio-button nzValue="script">Funscript only</label>
+    <label nz-radio-button nzValue="video">Video w/ funscript</label>
+  </nz-radio-group>
+
+  <nz-divider nzDashed="true"></nz-divider>
+
+  <app-load-funscript></app-load-funscript>
+  <app-funscript-controller *ngIf="mode === 'script'"></app-funscript-controller>
+  <app-load-video *ngIf="mode === 'video'"></app-load-video>
+  <ng-container
+    *ngIf="
+      ((userInputService.funscriptFile | async)?.file?.actions)!.length !== 0
+    "
+  >
+    <app-funscript-heatmap
+      [funscript]="userInputService.funscriptFile.value.file"
+      [width]="550"
+    ></app-funscript-heatmap>
+  </ng-container>
+</nz-card>

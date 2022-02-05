@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ThemeToggleButtonComponent } from './theme-toggle-button.component';
+import { LoadVideoComponent } from './load-video.component';
 
-describe('ThemeToggleButtonComponent', () => {
-  let component: ThemeToggleButtonComponent;
-  let fixture: ComponentFixture<ThemeToggleButtonComponent>;
+describe('VideoSelectComponent', () => {
+  let component: LoadVideoComponent;
+  let fixture: ComponentFixture<LoadVideoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ThemeToggleButtonComponent],
+      declarations: [LoadVideoComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ThemeToggleButtonComponent);
+    fixture = TestBed.createComponent(LoadVideoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

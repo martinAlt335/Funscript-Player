@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ButtplugService } from '../buttplug/buttplug.service';
-import { UserInputService } from '../user-input/user-input.service';
+import { UserInputService } from '../load-video/user-input.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Player } from '@vime/angular';
@@ -87,7 +87,7 @@ export class VideoPlayerComponent implements OnInit {
 
     if (!this.buttPlug.activeEvent.value) {
       this.buttPlug
-        .sendEvent(Math.round(event.detail * 1000), this.device, this.funscript)
+        .sendEvent(Math.round(event.detail * 1000), this.funscript)
         .then(() => {
           return;
         });

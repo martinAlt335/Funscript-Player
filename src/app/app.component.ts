@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { UserInputService } from './user-input/user-input.service';
-import { ThemeService } from './theme.service';
+import { UserInputService } from './load-video/user-input.service';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +9,5 @@ import { ThemeService } from './theme.service';
 export class AppComponent {
   title = 'funscript-player';
 
-  constructor(
-    public userInputService: UserInputService,
-    private themeService: ThemeService
-  ) {
-    this.themeService.load();
-  }
+  constructor(public userInputService: UserInputService) {}
 }

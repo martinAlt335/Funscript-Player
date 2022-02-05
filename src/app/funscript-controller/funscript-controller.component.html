@@ -1,0 +1,8 @@
+<ng-container *ngIf="fsFile.actions.length > 0">
+    <button nz-button nzType="default" (click)="handlePause()"><i nz-icon
+                                                                  [nzType]="pause.value ? 'play-circle' : 'pause-circle'"></i>
+    </button>
+    <nz-slider (mouseenter)="handlePause(true)" (touchmove)="handlePause(true)" (mouseleave)="handlePause()"
+               (touchend)="handlePause()" (nzOnAfterChange)="handleControl($event)" [ngModel]="currPos"
+               [nzMax]="fsFile.actions[fsFile.actions.length - 1].at"></nz-slider>
+</ng-container>

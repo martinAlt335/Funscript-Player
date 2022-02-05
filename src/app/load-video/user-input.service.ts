@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { NotificationsService } from '../notifications.service';
 import { Funscript } from 'funscript-utils/lib/types';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,14 @@ export class UserInputService {
     file: { actions: [] },
   });
 
-  constructor(private notifications: NotificationsService) {}
+  constructor(
+    private notifications: NotificationsService,
+    private formBuilder: FormBuilder
+  ) {}
+
+  urlForm = this.formBuilder.group({
+    url: [{ value: null, disabled: true }, [Validators.minLength(6)]],
+  });
 
   updateFunscript(file: Funscript, name: string): void {
     let fileName;

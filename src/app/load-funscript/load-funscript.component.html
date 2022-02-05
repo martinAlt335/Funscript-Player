@@ -1,0 +1,35 @@
+<div class="container">
+  <input
+    type="file"
+    style="display: none"
+    #fsFileInput
+    accept="funscript"
+    (change)="onFunscriptSelected()"
+  />
+  <button
+    nz-button
+    nzType="primary"
+    class="file-select-button"
+    (click)="onClickFunscriptInputButton()"
+  >
+    Select funscript file
+  </button>
+
+  <br />
+
+  <span
+    class="file-name"
+    *ngIf="
+        (userInputService.funscriptFile | async)?.name?.length == 0;
+        else fileName
+      "
+  >
+      No funscript file selected!</span
+  >
+
+  <ng-template #fileName>
+      <span class="file-name">
+        {{ userInputService.funscriptFile.value.name }}</span
+      >
+  </ng-template>
+</div>

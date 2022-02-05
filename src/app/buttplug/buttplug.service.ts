@@ -18,7 +18,11 @@ export class ButtplugService {
   constructor(
     private state: StateService,
     private notifications: NotificationsService
-  ) {}
+  ) {
+    this.trackClientStatus();
+  }
+
+  public device: false | ButtplugClientDevice = false;
 
   public client!: ButtplugClient;
   public isConnected = new BehaviorSubject<boolean>(false);
@@ -40,6 +44,22 @@ export class ButtplugService {
 
   private static OnDeviceListChanged(aDevice: ButtplugClientDevice): void {
     console.log(aDevice);
+  }
+
+  /** Tracks buttPlug service updating active target device variable on device changes. */
+  private trackClientStatus(): void {
+    this.isConnected.subscribe((isConnected) => {
+      if (isConnected) {
+        this.client.on('deviceadded', async () => {
+          this.notifications.showToast('Client connected', 'success');
+          this.device = this.client.Devices[0];
+        });
+
+        this.client.on('deviceremoved', async () => {
+          this.device = false;
+        });
+      }
+    });
   }
 
   private AddListeners(): void {
@@ -138,10 +158,9 @@ export class ButtplugService {
 
   public async sendEvent(
     currTime: number,
-    device: false | ButtplugClientDevice,
     funscript: Funscript
   ): Promise<void> {
-    if (device) {
+    if (this.device) {
       const range = { min: currTime - 50, max: currTime + 50 };
       // get index of action in the bounds of range
       const index = funscript.actions.findIndex(
@@ -177,7 +196,7 @@ export class ButtplugService {
               );
             }
             this.activeEvent.next(true);
-            await device.linear(set.current.pos * 0.01, duration);
+            await this.device.linear(set.current.pos * 0.01, duration);
             await delay(duration).then(() => {
               this.activeEvent.next(false);
               if (!this.state.isProd) {

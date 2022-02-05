@@ -2,22 +2,10 @@
   <!--<app-theme-toggle-button style="position: fixed;-->
   <!--    left: 9px;-->
   <!--    bottom: 50px;"></app-theme-toggle-button>-->
-  <app-buttplug></app-buttplug>
-  <app-user-input></app-user-input>
-  <br />
-  <app-video-player></app-video-player>
+  <app-buttplug-control-panel></app-buttplug-control-panel>
 
-  <ng-container
-    *ngIf="
-      ((userInputService.funscriptFile | async)?.file?.actions)!.length !== 0
-    "
-  >
-    <app-funscript-heatmap
-      [funscript]="userInputService.funscriptFile.value.file"
-      [width]="980"
-      [height]="300"
-    ></app-funscript-heatmap>
-  </ng-container>
+  <app-user-flow></app-user-flow>
+  <br />
 
   <div
     style="

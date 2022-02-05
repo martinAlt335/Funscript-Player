@@ -1,19 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserInputComponent } from './user-input.component';
+import { UserFlowComponent } from './user-flow.component';
 
-describe('VideoSelectComponent', () => {
-  let component: UserInputComponent;
-  let fixture: ComponentFixture<UserInputComponent>;
+describe('UserFlowComponent', () => {
+  let component: UserFlowComponent;
+  let fixture: ComponentFixture<UserFlowComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UserInputComponent],
-    }).compileComponents();
+      declarations: [ UserFlowComponent ]
+    })
+    .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UserInputComponent);
+    fixture = TestBed.createComponent(UserFlowComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
