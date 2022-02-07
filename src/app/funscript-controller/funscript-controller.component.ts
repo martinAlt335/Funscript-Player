@@ -5,6 +5,7 @@ import { Funscript } from 'funscript-utils/lib/types';
 import { ButtplugService } from '../buttplug/buttplug.service';
 import { NzSliderValue } from 'ng-zorro-antd/slider';
 import { BehaviorSubject } from 'rxjs';
+import { msToTime } from '../utils/ms-to-time';
 
 @UntilDestroy()
 @Component({
@@ -14,9 +15,12 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class FunscriptControllerComponent implements OnInit {
+  msToTime = msToTime;
+  formatter = (value: number) => this.msToTime(value);
   currPos = 0;
   pause: BehaviorSubject<boolean> = new BehaviorSubject(true as boolean);
   fsFile: Funscript = { actions: [] };
+  interval: NodeJS.Timeout | undefined = undefined;
 
   constructor(
     private buttPlug: ButtplugService,
@@ -42,19 +46,22 @@ export class FunscriptControllerComponent implements OnInit {
   }
 
   handlePlay(): void {
-    const interval = setInterval(async () => {
-      if (
-        !this.pause.value &&
-        this.fsFile.actions[this.fsFile.actions.length - 1].at > this.currPos
-      ) {
-        this.currPos += 100;
-        // console.log(this.currPos);
-        await this.buttPlug.sendEvent(this.currPos, this.fsFile);
-      } else {
-        clearInterval(interval);
-      }
-    }, 100);
-    () => interval;
+    if (this.interval === undefined) {
+      this.interval = setInterval(async () => {
+        if (
+          !this.pause.value &&
+          this.fsFile.actions[this.fsFile.actions.length - 1].at > this.currPos
+        ) {
+          this.currPos += 100;
+          // console.log(this.currPos);
+          await this.buttPlug.sendEvent(this.currPos, this.fsFile);
+        } else {
+          clearInterval(this.interval as NodeJS.Timeout);
+          this.interval = undefined;
+        }
+      }, 100);
+      () => this.interval;
+    }
   }
 
   handlePause(forcePause?: boolean): void {

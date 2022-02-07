@@ -13,7 +13,7 @@ import { Player } from '@vime/angular';
 import { ButtplugClientDevice } from 'buttplug';
 import { BehaviorSubject } from 'rxjs';
 import { NotificationsService } from '../notifications.service';
-import { delay } from '../utilts';
+import { delay } from '../utils/delay';
 import { Funscript } from 'funscript-utils/lib/types';
 
 @UntilDestroy()

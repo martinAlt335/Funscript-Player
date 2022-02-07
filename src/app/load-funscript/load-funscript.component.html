@@ -6,30 +6,21 @@
     accept="funscript"
     (change)="onFunscriptSelected()"
   />
-  <button
-    nz-button
-    nzType="primary"
-    class="file-select-button"
-    (click)="onClickFunscriptInputButton()"
-  >
-    Select funscript file
-  </button>
 
-  <br />
+  <div style="display: flex; justify-content: space-between">
+    <button
+      nz-button
+      nzType="primary"
+      class="file-select-button"
+      (click)="onClickFunscriptInputButton()"
+    >
+      Select funscript file
+    </button>
 
-  <span
-    class="file-name"
-    *ngIf="
-        (userInputService.funscriptFile | async)?.name?.length == 0;
-        else fileName
-      "
-  >
-      No funscript file selected!</span
-  >
+    <span
+      class="file-name">
+      {{(userInputService.funscriptFile | async)?.name?.length == 0 ? 'No funscript file selected!' : userInputService.funscriptFile.value.name}}
+  </span>
+  </div>
 
-  <ng-template #fileName>
-      <span class="file-name">
-        {{ userInputService.funscriptFile.value.name }}</span
-      >
-  </ng-template>
 </div>
