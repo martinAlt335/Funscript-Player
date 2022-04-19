@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { UserInputService } from './load-video/user-input.service';
+import { UserInputService } from './components/load/load-video/user-input.service';
+import { UntilDestroy } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

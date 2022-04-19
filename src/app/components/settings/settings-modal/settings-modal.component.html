@@ -1,0 +1,14 @@
+<div>
+  <h4>Device mode</h4>
+  <nz-radio-group [ngModel]="radioValue" (ngModelChange)="modelChange($event)">
+    <label nz-radio-button nzValue="linear">Linear</label>
+    <label nz-radio-button nzValue="linear+rotate" nzDisabled>Linear & Rotate</label>
+    <label nz-radio-button nzValue="vibrate">Vibrate</label>
+  </nz-radio-group>
+
+  <h4 style="margin-top: 1.5rem;">Hotkeys</h4>
+  <div style="display: grid; grid-template-columns: 1fr auto; column-gap: 10px" *ngFor="let keys of hotkeysArr">
+    <span>{{ keys[1] }}</span>
+    <nz-tag style="width: 45px;">{{ keys[0] }}</nz-tag>
+  </div>
+</div>

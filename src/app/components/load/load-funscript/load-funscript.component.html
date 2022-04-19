@@ -1,0 +1,26 @@
+<div class="container">
+  <input
+    type="file"
+    style="display: none"
+    #fsFileInput
+    accept="funscript"
+    (change)="onFunscriptSelected()"
+  />
+
+  <div style="display: flex; justify-content: space-between; column-gap: 10px; font-size: 12px">
+    <button
+      nz-button
+      nzType="primary"
+      class="file-select-button"
+      (click)="onClickFunscriptInputButton()"
+    >
+      Select funscript file
+    </button>
+
+    <span
+      class="file-name">
+      {{(userInputService.funscriptFile | async)?.name?.length == 0 ? 'No funscript file selected!' : userInputService.funscriptFile.value.name}}
+  </span>
+  </div>
+
+</div>

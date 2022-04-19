@@ -23,17 +23,23 @@ export class NotificationsService {
 
   constructor(private toastService: HotToastService) {}
 
-  showToast(text: string, type: 'error' | 'info' | 'success'): void {
-    if (type === 'error') {
-      this.toastService.error(text, { ...this.toastConfig });
-    }
-
-    if (type === 'info') {
-      this.toastService.loading(text, { ...this.toastConfig });
-    }
-
-    if (type === 'success') {
-      this.toastService.success(text, { ...this.toastConfig });
+  showToast(
+    text: string,
+    type: 'error' | 'warning' | 'info' | 'success'
+  ): void {
+    switch (type) {
+      case 'error':
+        this.toastService.error(text, { ...this.toastConfig });
+        break;
+      case 'warning':
+        this.toastService.warning(text, { ...this.toastConfig });
+        break;
+      case 'info':
+        this.toastService.loading(text, { ...this.toastConfig });
+        break;
+      case 'success':
+        this.toastService.success(text, { ...this.toastConfig });
+        break;
     }
   }
 }
