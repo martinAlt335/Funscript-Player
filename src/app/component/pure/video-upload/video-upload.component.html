@@ -1,0 +1,55 @@
+<div class="flex w-full">
+  <h2 class="text-lg">Upload Video</h2>
+  <span class="ml-auto">Accepts local video or streaming URL</span>
+</div>
+
+<div class="flex flex-col gap-4">
+  <!-- File Upload -->
+  <div>
+    <nz-upload
+      nzType="drag"
+      nzAccept="video/*"
+      [nzShowUploadList]="false"
+      (nzChange)="handleFileUpload($event)"
+    >
+      <p class="ant-upload-drag-icon">
+        <span nz-icon nzType="upload"></span>
+      </p>
+      <p class="ant-upload-text">Video Upload</p>
+    </nz-upload>
+  </div>
+
+  <!-- URL Input -->
+  <div class="flex items-center gap-2">
+    <input
+      nz-input
+      placeholder="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+      [(ngModel)]="sourceUrl"
+    />
+    <button nz-button nzType="primary" (click)="onUrlSubmit()">Load URL</button>
+  </div>
+
+  <!-- Loaded Video Notification -->
+  <div class="flex items-center mt-2 overflow-x-auto" *ngIf="videoFileName">
+    <nz-tag nzColor="success" class="flex items-center">
+      <span class="md:text-lg">
+        <span nz-icon nzType="check-circle"></span>
+        <span class="ml-2">
+          Loaded
+          {{ "video: " + videoFileName }}
+        </span>
+      </span>
+    </nz-tag>
+    <button
+      nz-button
+      nzType="default"
+      nzShape="circle"
+      nzDanger
+      class="ml-2"
+      (click)="deleteVideo()"
+      aria-label="Delete Video Button"
+    >
+      <span nz-icon nzType="delete"></span>
+    </button>
+  </div>
+</div>

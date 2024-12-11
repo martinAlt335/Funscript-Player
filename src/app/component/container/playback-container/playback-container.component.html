@@ -1,0 +1,26 @@
+<div class="playback-section">
+  <ng-container *ngIf="videoUrl; else noVideo">
+    <div class="md:max-w-2xl mx-auto">
+      <app-video-player
+        [sourceUrl]="videoUrl"
+        [mimeType]="$any(mimeType)"
+        (currentTimeMs)="handlePlaybackTimeUpdate($event)"
+        (paused)="handlePlaybackPause()"
+      ></app-video-player>
+    </div>
+  </ng-container>
+  <ng-template #noVideo>
+    <app-funscript-playback-controller
+      [maxTime]="funscriptDuration"
+      (currentTimeMsOutput)="handlePlaybackTimeUpdate($event)"
+      (pause)="handlePlaybackPause()"
+    ></app-funscript-playback-controller>
+  </ng-template>
+
+  <div class="md:max-w-2xl mx-auto" *ngIf="funscript">
+    <app-funscript-heatmap
+      [heightPx]="80"
+      [funscript]="funscript"
+    ></app-funscript-heatmap>
+  </div>
+</div>

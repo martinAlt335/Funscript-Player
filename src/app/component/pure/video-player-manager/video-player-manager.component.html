@@ -1,0 +1,38 @@
+<div class="flex w-full">
+  <h2 class="text-lg">Video Player</h2>
+  <span class="ml-auto">Accepts URL or local file</span>
+</div>
+
+<div class="flex flex-col gap-4">
+  <!-- File Upload -->
+  <div>
+    <nz-upload
+      nzType="drag"
+      nzAccept="video/*"
+      [nzShowUploadList]="false"
+      (nzChange)="handleChange($event)"
+    >
+      <p class="ant-upload-drag-icon">
+        <span nz-icon nzType="upload"></span>
+      </p>
+      <p class="ant-upload-text">Upload a video</p>
+      <p class="ant-upload-hint">You can upload a local video for playback</p>
+    </nz-upload>
+  </div>
+
+  <!-- URL Input -->
+  <div class="flex items-center gap-2">
+    <input nz-input placeholder="Enter video URL" [(ngModel)]="sourceUrl" />
+    <button nz-button nzType="primary" (click)="onUrlSubmit()">Load URL</button>
+  </div>
+
+  <!-- Video Player -->
+  <nz-card class="!mx-auto w-full max-w-xl" *ngIf="videoSourceUrl">
+    <app-video-player
+      [sourceUrl]="videoSourceUrl"
+      [mimeType]="selectedMimeType!"
+      (currentTimeMs)="handleVideoTimeUpdate($event)"
+      (paused)="handlePause()"
+    ></app-video-player>
+  </nz-card>
+</div>

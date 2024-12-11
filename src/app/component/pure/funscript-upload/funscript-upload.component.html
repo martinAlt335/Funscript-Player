@@ -1,0 +1,40 @@
+<div class="flex w-full">
+  <h2 class="text-lg">Upload Funscript</h2>
+  <span class="ml-auto">Accepts .funscript file</span>
+</div>
+
+<div class="flex flex-col gap-4">
+  <div>
+    <nz-upload
+      nzType="drag"
+      nzAccept=".funscript"
+      [nzShowUploadList]="false"
+      (nzChange)="handleChange($event)"
+    >
+      <p class="ant-upload-drag-icon">
+        <span nz-icon nzType="upload"></span>
+      </p>
+      <p class="ant-upload-text">Funscript Upload</p>
+    </nz-upload>
+  </div>
+</div>
+
+<div class="flex items-center mt-2 overflow-x-auto" *ngIf="fileName">
+  <nz-tag nzColor="success" class="flex items-center">
+    <span class="md:text-lg">
+      <span nz-icon nzType="check-circle"></span>
+      <span class="ml-2">Loaded file: {{ fileName }}</span>
+    </span>
+  </nz-tag>
+  <button
+    nz-button
+    nzType="default"
+    nzShape="circle"
+    nzDanger
+    class="ml-2"
+    (click)="deleteFunscript()"
+    aria-label="Delete Funscript Button"
+  >
+    <span nz-icon nzType="delete"></span>
+  </button>
+</div>

@@ -1,18 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { UserInputService } from './components/load/load-video/user-input.service';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { RouterOutlet } from '@angular/router';
 import { environment } from '../environments/environment';
+import { NzCardComponent } from 'ng-zorro-antd/card';
+import { ButtplugControlPanelComponent } from './component/buttplug-control-panel.component';
+import { UploadContainerComponent } from './component/container/upload-container/upload-container.component';
+import { PlaybackContainerComponent } from './component/container/playback-container/playback-container.component';
 
-@UntilDestroy()
 @Component({
   selector: 'app-root',
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    NzCardComponent,
+    ButtplugControlPanelComponent,
+    UploadContainerComponent,
+    PlaybackContainerComponent,
+  ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
   title = 'funscript-player';
-
-  constructor(public userInputService: UserInputService) {}
 
   ngOnInit(): void {
     this.startUsage();

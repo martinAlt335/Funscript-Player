@@ -1,0 +1,15 @@
+<nz-row [nzGutter]="16">
+  <nz-col [nzSpan]="12">
+    <app-funscript-upload
+      (funscriptFile)="onFunscriptUploaded($event)"
+      (funscriptDeleted)="onFunscriptDeleted()"
+    ></app-funscript-upload>
+  </nz-col>
+
+  <nz-col [nzSpan]="12">
+    <app-video-upload
+      (videoSelected)="onVideoSelected($event)"
+      (videoDeleted)="onVideoDeleted()"
+    ></app-video-upload>
+  </nz-col>
+</nz-row>
