@@ -50,7 +50,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
   template: `
     @let sendActionsEnabled = configRepo.sendActionsEnabled$ | async;
 
-    <h2 class="text-lg">Buttplug Server Control</h2>
+    <h2 class="text-lg">Server Control</h2>
 
     @let selectedConnectionType = configRepo.selectedConnectionType$ | async;
 
