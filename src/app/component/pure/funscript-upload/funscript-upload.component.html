@@ -8,6 +8,7 @@
     <nz-upload
       nzType="drag"
       nzAccept=".funscript"
+      [nzCustomRequest]="customRequest"
       [nzShowUploadList]="false"
       (nzChange)="handleChange($event)"
     >

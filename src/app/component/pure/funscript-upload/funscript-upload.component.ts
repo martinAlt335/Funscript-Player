@@ -1,18 +1,23 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
-import { NzButtonComponent } from 'ng-zorro-antd/button';
-import { NzCardComponent } from 'ng-zorro-antd/card';
-import { NzIconDirective } from 'ng-zorro-antd/icon';
-import { NzInputDirective } from 'ng-zorro-antd/input';
-import { NzUploadChangeParam, NzUploadComponent } from 'ng-zorro-antd/upload';
-import { NzWaveDirective } from 'ng-zorro-antd/core/wave';
-import { Funscript } from 'funscript-utils/lib/types';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzTagComponent } from 'ng-zorro-antd/tag';
+import { Component, EventEmitter, Output } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { NgIf } from "@angular/common";
+import { NzButtonComponent } from "ng-zorro-antd/button";
+import { NzCardComponent } from "ng-zorro-antd/card";
+import { NzIconDirective } from "ng-zorro-antd/icon";
+import { NzInputDirective } from "ng-zorro-antd/input";
+import {
+  NzUploadChangeParam,
+  NzUploadComponent,
+  NzUploadXHRArgs,
+} from "ng-zorro-antd/upload";
+import { NzWaveDirective } from "ng-zorro-antd/core/wave";
+import { Funscript } from "funscript-utils/lib/types";
+import { NzMessageService } from "ng-zorro-antd/message";
+import { NzTagComponent } from "ng-zorro-antd/tag";
+import { Subscription } from "rxjs";
 
 @Component({
-  selector: 'app-funscript-upload',
+  selector: "app-funscript-upload",
   standalone: true,
   imports: [
     FormsModule,
@@ -25,8 +30,8 @@ import { NzTagComponent } from 'ng-zorro-antd/tag';
     NzWaveDirective,
     NzTagComponent,
   ],
-  templateUrl: './funscript-upload.component.html',
-  styleUrls: ['./funscript-upload.component.scss'],
+  templateUrl: "./funscript-upload.component.html",
+  styleUrls: ["./funscript-upload.component.scss"],
 })
 export class FunscriptUploadComponent {
   @Output() funscriptFile = new EventEmitter<{
@@ -39,11 +44,16 @@ export class FunscriptUploadComponent {
 
   constructor(private message: NzMessageService) {}
 
-  handleChange({ file }: NzUploadChangeParam): void {
-    const status = file.status;
+  customRequest(item: NzUploadXHRArgs) {
+    setTimeout(() => {
+      item.onSuccess?.({ status: "success" }, item.file, undefined);
+    }, 10);
+    return new Subscription();
+  }
 
-    if (status === 'done' || status === 'uploading') {
-      if (file && file.originFileObj) {
+  handleChange({ file }: NzUploadChangeParam): void {
+    if (file.status === "done") {
+      if (file.originFileObj) {
         const reader = new FileReader();
         reader.onload = () => {
           try {
@@ -68,6 +78,6 @@ export class FunscriptUploadComponent {
   deleteFunscript(): void {
     this.fileName = undefined;
     this.funscriptDeleted.emit();
-    this.message.info('Funscript file has been removed.');
+    this.message.info("Funscript file has been removed.");
   }
 }

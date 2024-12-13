@@ -1,14 +1,19 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { NzUploadChangeParam, NzUploadComponent } from 'ng-zorro-antd/upload';
-import { NzIconDirective } from 'ng-zorro-antd/icon';
-import { NzButtonComponent } from 'ng-zorro-antd/button';
-import { NzInputDirective } from 'ng-zorro-antd/input';
-import { NzTagComponent } from 'ng-zorro-antd/tag';
+import { Component, EventEmitter, Output } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import {
+  NzUploadChangeParam,
+  NzUploadComponent,
+  NzUploadXHRArgs,
+} from "ng-zorro-antd/upload";
+import { NzIconDirective } from "ng-zorro-antd/icon";
+import { NzButtonComponent } from "ng-zorro-antd/button";
+import { NzInputDirective } from "ng-zorro-antd/input";
+import { NzTagComponent } from "ng-zorro-antd/tag";
+import { Subscription } from "rxjs";
 
 @Component({
-  selector: 'app-video-upload',
+  selector: "app-video-upload",
   standalone: true,
   imports: [
     CommonModule,
@@ -19,8 +24,8 @@ import { NzTagComponent } from 'ng-zorro-antd/tag';
     NzInputDirective,
     NzTagComponent,
   ],
-  templateUrl: './video-upload.component.html',
-  styleUrls: ['./video-upload.component.scss'],
+  templateUrl: "./video-upload.component.html",
+  styleUrls: ["./video-upload.component.scss"],
 })
 export class VideoUploadComponent {
   @Output() videoSelected = new EventEmitter<{
@@ -30,11 +35,18 @@ export class VideoUploadComponent {
 
   @Output() videoDeleted = new EventEmitter<void>(); // Emit when video is deleted
 
-  sourceUrl: string = '';
+  sourceUrl: string = "";
   videoFileName?: string; // Track the uploaded video file name
 
+  customRequest(item: NzUploadXHRArgs) {
+    setTimeout(() => {
+      return item.onSuccess?.({ status: "success" }, item.file, undefined);
+    }, 10);
+    return new Subscription();
+  }
+
   handleFileUpload({ file }: NzUploadChangeParam): void {
-    if (file.status === 'done' || file.status === 'uploading') {
+    if (file.status === "done") {
       if (file.originFileObj) {
         const url = URL.createObjectURL(file.originFileObj);
         this.videoSelected.emit({ fileName: file.name, videoUrl: url });
@@ -46,14 +58,14 @@ export class VideoUploadComponent {
   onUrlSubmit(): void {
     if (this.sourceUrl.trim()) {
       this.videoSelected.emit({ videoUrl: this.sourceUrl.trim() });
-      this.videoFileName = 'URL Video';
+      this.videoFileName = "URL Video";
     }
   }
 
   deleteVideo(): void {
     this.videoFileName = undefined;
-    this.sourceUrl = '';
-    this.videoSelected.emit({ videoUrl: '' });
+    this.sourceUrl = "";
+    this.videoSelected.emit({ videoUrl: "" });
     this.videoDeleted.emit();
   }
 }
