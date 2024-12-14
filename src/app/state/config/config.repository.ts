@@ -1,25 +1,26 @@
-import { Injectable } from '@angular/core';
-import { createStore, select, Store, withProps } from '@ngneat/elf';
-import { Observable } from 'rxjs';
-import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
+import { Injectable } from "@angular/core";
+import { createStore, select, Store, withProps } from "@ngneat/elf";
+import { Observable } from "rxjs";
+import { localStorageStrategy, persistState } from "@ngneat/elf-persist-state";
 
 export enum ConnectionType {
-  External = 'external',
-  Local = 'local',
+  External = "external",
+  Local = "local",
 }
 
 export interface ConfigState {
   externalUrl: string;
   sendActionsEnabled: boolean;
-  selectedConnectionType: ConnectionType; // New Property
+  selectedConnectionType: ConnectionType;
+  scriptTimingOffsetMs: number;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class ConfigRepository {
   store: Store<any, ConfigState>;
   sendActionsEnabled$!: Observable<boolean>;
   externalUrl$!: Observable<string>;
-  selectedConnectionType$!: Observable<'external' | 'local'>; // New Observable
+  selectedConnectionType$!: Observable<"external" | "local">;
 
   constructor() {
     this.store = this.createStore();
@@ -43,18 +44,19 @@ export class ConfigRepository {
 
   createStore() {
     return createStore(
-      { name: 'config' },
+      { name: "config" },
       withProps<ConfigState>({
-        externalUrl: 'ws://localhost:12345',
+        externalUrl: "ws://localhost:12345",
         sendActionsEnabled: true,
         selectedConnectionType: ConnectionType.Local,
+        scriptTimingOffsetMs: -200,
       })
     );
   }
 
   persistState() {
     persistState(this.store, {
-      key: 'config',
+      key: "config",
       storage: localStorageStrategy,
     });
   }

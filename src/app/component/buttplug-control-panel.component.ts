@@ -1,34 +1,36 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import {
   ButtplugConnectionState,
   ButtplugDeviceInfo,
   ButtplugService,
-} from '../service/buttplug.service';
-import { FormsModule } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSwitchModule } from 'ng-zorro-antd/switch';
-import { NzListModule } from 'ng-zorro-antd/list';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
+} from "../service/buttplug.service";
+import { FormsModule } from "@angular/forms";
+import { NzButtonModule } from "ng-zorro-antd/button";
+import { NzInputModule } from "ng-zorro-antd/input";
+import { NzSwitchModule } from "ng-zorro-antd/switch";
+import { NzListModule } from "ng-zorro-antd/list";
+import { NzSpinModule } from "ng-zorro-antd/spin";
 import {
   ConfigRepository,
   ConnectionType,
-} from '../state/config/config.repository';
-import { DevicePreferencesService } from '../service/device-preferences.service';
-import { NzTagComponent } from 'ng-zorro-antd/tag';
-import { NzToolTipComponent } from 'ng-zorro-antd/tooltip';
-import { NzTypographyComponent } from 'ng-zorro-antd/typography';
-import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
-import { NzCardComponent } from 'ng-zorro-antd/card';
-import { NzRadioComponent, NzRadioGroupComponent } from 'ng-zorro-antd/radio';
-import { NzIconDirective } from 'ng-zorro-antd/icon';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+} from "../state/config/config.repository";
+import { DevicePreferencesService } from "../service/device-preferences.service";
+import { NzTagComponent } from "ng-zorro-antd/tag";
+import { NzToolTipComponent } from "ng-zorro-antd/tooltip";
+import { NzTypographyComponent } from "ng-zorro-antd/typography";
+import { NzCheckboxComponent } from "ng-zorro-antd/checkbox";
+import { NzCardComponent } from "ng-zorro-antd/card";
+import { NzRadioComponent, NzRadioGroupComponent } from "ng-zorro-antd/radio";
+import { NzIconDirective } from "ng-zorro-antd/icon";
+import { NzDropDownModule } from "ng-zorro-antd/dropdown";
+import { NzInputNumberComponent } from "ng-zorro-antd/input-number";
+import { NzAlertComponent } from "ng-zorro-antd/alert";
 
 @Component({
-  selector: 'app-buttplug-control-panel',
+  selector: "app-buttplug-control-panel",
   standalone: true,
-  styleUrl: './app-buttplug-control-panel.component.scss',
+  styleUrl: "./app-buttplug-control-panel.component.scss",
   imports: [
     CommonModule,
     FormsModule,
@@ -46,6 +48,8 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzIconDirective,
     NzRadioGroupComponent,
     NzDropDownModule,
+    NzInputNumberComponent,
+    NzAlertComponent,
   ],
   template: `
     @let sendActionsEnabled = configRepo.sendActionsEnabled$ | async;
@@ -127,7 +131,11 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
               nzTheme="outline"
               *ngIf="isConnecting"
             ></span>
-            Connect
+            {{
+              configRepo.selectedConnectionType === "local" && !hasWebBluetooth
+                ? "Requires WebBluetooth"
+                : "Connect"
+            }}
           </button>
           <button
             class="lg:ml-2"
@@ -152,6 +160,68 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
           Connected to: <strong>{{ connectedUrl }}</strong>
         </p>
       </div>
+    </nz-card>
+
+    <!-- Timing Offset Section -->
+    <nz-card class="my-2">
+      <div class="flex justify-between items-center">
+        <h3>🔧 Sync Adjustment</h3>
+        <nz-tooltip
+          nzTitle="Adjust the timing to synchronize device actions with the video."
+        >
+          <i
+            nz-icon
+            nzType="info-circle"
+            nzTheme="outline"
+            aria-label="Sync Adjustment Information"
+            class="cursor-pointer"
+          ></i>
+        </nz-tooltip>
+      </div>
+
+      <p class="text-sm text-gray-300 mt-2">
+        Use this setting to
+        <strong class="text-yellow-500">reduce lag</strong> between the video
+        and device actions.
+        <br />
+        <strong class="text-pink-500">Negative values</strong> fire actions
+        <em>earlier</em>;
+        <strong class="text-orange-500">Positive values</strong> fire them
+        <em>later</em>.
+      </p>
+
+      <div class="flex items-center mt-4">
+        <nz-input-number
+          [ngModel]="timingOffset"
+          (ngModelChange)="onTimingOffsetChange($event)"
+          [nzMin]="-2000"
+          [nzMax]="2000"
+          [nzStep]="100"
+          [nzPrecision]="0"
+          [nzFormatter]="formatter"
+          [nzParser]="parser"
+          style="width: 200px;"
+          aria-label="Script to Device Offset Input"
+          [ngClass]="{
+            'text-pink-500': timingOffset < 0,
+            'text-orange-500': timingOffset > 0
+          }"
+        ></nz-input-number>
+        <span class="ml-3 text-sm text-gray-400">(ms)</span>
+      </div>
+
+      <p class="text-xs text-gray-400 mt-1">
+        Example: Enter <strong>-1000</strong> to trigger actions 1 second
+        earlier.
+      </p>
+
+      <nz-alert
+        *ngIf="timingOffset !== 0"
+        nzType="info"
+        nzMessage="Remember to test different values to find the best offset for your setup."
+        nzShowIcon
+        class="mt-3"
+      ></nz-alert>
     </nz-card>
 
     <!-- Scanning Controls -->
@@ -180,7 +250,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
       <span>
         Scanning:
         <nz-spin *ngIf="isScanning" aria-label="Scanning Indicator"></nz-spin>
-        <strong>{{ isScanning ? 'In Progress...' : 'Stopped' }}</strong>
+        <strong>{{ isScanning ? "In Progress..." : "Stopped" }}</strong>
       </span>
     </nz-card>
 
@@ -361,6 +431,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 })
 export class ButtplugControlPanelComponent implements OnInit {
   externalUrl!: string;
+  timingOffset!: number;
   connectionState = ButtplugConnectionState.DISCONNECTED;
   isConnecting = false;
   isScanning = false;
@@ -428,10 +499,19 @@ export class ButtplugControlPanelComponent implements OnInit {
     // Subscribe to configuration changes
     this.configRepo.store.subscribe((config) => {
       this.externalUrl = config.externalUrl;
+      this.timingOffset = config.scriptTimingOffsetMs;
     });
 
     // Initial load of global preferences
     this.updateGlobalPreferences();
+  }
+
+  get hasWebBluetooth(): boolean {
+    return (
+      typeof window !== "undefined" &&
+      typeof window.navigator !== "undefined" &&
+      (navigator as any).bluetooth !== undefined
+    );
   }
 
   get isConnected(): boolean {
@@ -440,8 +520,11 @@ export class ButtplugControlPanelComponent implements OnInit {
 
   // Compute whether the Connect button should be enabled
   get canConnect(): boolean {
-    if (this.configRepo.selectedConnectionType === 'external') {
+    if (this.configRepo.selectedConnectionType === "external") {
       return this.externalUrl.trim().length > 0 && !this.urlInvalid;
+    }
+    if (this.configRepo.selectedConnectionType === "local") {
+      return this.hasWebBluetooth;
     }
     return true;
   }
@@ -450,17 +533,17 @@ export class ButtplugControlPanelComponent implements OnInit {
   get connectionStateClass(): string {
     switch (this.connectionState) {
       case ButtplugConnectionState.CONNECTED:
-        return 'connected';
+        return "connected";
       case ButtplugConnectionState.CONNECTING:
-        return 'connecting';
+        return "connecting";
       case ButtplugConnectionState.DISCONNECTED:
       default:
-        return 'disconnected';
+        return "disconnected";
     }
   }
 
   connect(): void {
-    if (this.configRepo.selectedConnectionType === 'external') {
+    if (this.configRepo.selectedConnectionType === "external") {
       if (!this.validateUrl(this.externalUrl)) {
         this.urlInvalid = true;
         setTimeout(() => (this.urlInvalid = false), 2000);
@@ -470,24 +553,24 @@ export class ButtplugControlPanelComponent implements OnInit {
       this.buttplugService
         .connectToExternalServer(this.externalUrl)
         .catch((err) => {
-          console.error('Failed to connect to external server:', err);
+          console.error("Failed to connect to external server:", err);
         });
-    } else if (this.configRepo.selectedConnectionType === 'local') {
+    } else if (this.configRepo.selectedConnectionType === "local") {
       this.buttplugService.connectToLocalServer().catch((err) => {
-        console.error('Failed to connect to local server:', err);
+        console.error("Failed to connect to local server:", err);
       });
     }
   }
 
   disconnect(): void {
     this.buttplugService.disconnect().catch((err) => {
-      console.error('Failed to disconnect:', err);
+      console.error("Failed to disconnect:", err);
     });
   }
 
   startScanning(): void {
     this.buttplugService.startScanning().catch((err) => {
-      console.error('Failed to start scanning:', err);
+      console.error("Failed to start scanning:", err);
     });
   }
 
@@ -495,7 +578,7 @@ export class ButtplugControlPanelComponent implements OnInit {
     this.buttplugService
       .stopScanning()
       .catch((err) => {
-        console.error('Failed to stop scanning:', err);
+        console.error("Failed to stop scanning:", err);
       })
       .then(() => (this.isScanning = false));
   }
@@ -507,7 +590,7 @@ export class ButtplugControlPanelComponent implements OnInit {
         setTimeout(() => this.buttplugService.stopDevice(device.index), 1000);
       })
       .catch((err) => {
-        console.error('Vibrate test failed:', err);
+        console.error("Vibrate test failed:", err);
       });
   }
 
@@ -517,7 +600,7 @@ export class ButtplugControlPanelComponent implements OnInit {
       .then(() =>
         setTimeout(() => this.buttplugService.stopDevice(device.index), 1000)
       )
-      .catch((err) => console.error('Rotate test failed:', err));
+      .catch((err) => console.error("Rotate test failed:", err));
   }
 
   linearTest(device: ButtplugDeviceInfo): void {
@@ -526,7 +609,7 @@ export class ButtplugControlPanelComponent implements OnInit {
       .then(() =>
         setTimeout(() => this.buttplugService.stopDevice(device.index), 1000)
       )
-      .catch((err) => console.error('Linear test failed:', err));
+      .catch((err) => console.error("Linear test failed:", err));
   }
 
   onSendActionsToggle(isEnabled: boolean): void {
@@ -536,7 +619,7 @@ export class ButtplugControlPanelComponent implements OnInit {
 
     if (!isEnabled && devicesCount > 0) {
       this.buttplugService.stopAllDevices().catch((err) => {
-        console.error('Failed to stop all devices:', err);
+        console.error("Failed to stop all devices:", err);
       });
     }
   }
@@ -549,6 +632,10 @@ export class ButtplugControlPanelComponent implements OnInit {
   // Method to handle external URL changes
   onExternalUrlChange(newUrl: string): void {
     this.configRepo.updateState({ externalUrl: newUrl });
+  }
+
+  onTimingOffsetChange(newOffset: number) {
+    this.configRepo.updateState({ scriptTimingOffsetMs: newOffset });
   }
 
   updateDevicePreferences(device: ButtplugDeviceInfo): void {
@@ -587,4 +674,10 @@ export class ButtplugControlPanelComponent implements OnInit {
     const pattern = /^wss?:\/\/[\w.-]+(:\d+)?(\/[\w.-]*)*$/;
     return pattern.test(url);
   }
+
+  // Formatter to display input as plain number without commas or decimals
+  formatter = (value: number): string => `${value}`;
+
+  // Parser to ensure input is parsed correctly
+  parser = (value: string): string => value;
 }

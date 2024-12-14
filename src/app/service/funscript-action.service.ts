@@ -12,7 +12,6 @@ import { ConfigRepository } from "../state/config/config.repository";
 export class FunscriptActionService {
   private actions: Action[] = [];
   private lastActionIndex = -1;
-  private latencyCompensationMs = 50;
 
   private funscriptDurationSubject = new BehaviorSubject<number>(0);
   public funscriptDuration$: Observable<number> =
@@ -49,7 +48,8 @@ export class FunscriptActionService {
   checkTime(currentTimeMs: number): void {
     if (!this.actions.length) return;
 
-    const compensatedTime = currentTimeMs + this.latencyCompensationMs;
+    const offset = this.getCurrentOffset();
+    const compensatedTime = currentTimeMs + offset;
     const actionIndex = this.findActionIndexForTime(compensatedTime);
 
     if (actionIndex !== -1 && actionIndex !== this.lastActionIndex) {
@@ -98,9 +98,8 @@ export class FunscriptActionService {
       const nextAction = this.actions[currentIndex + 1];
 
       // Calculate dynamic duration based on time gap
-      // Subtract latency compensation to help keep things in sync
       const rawGapMs = nextAction.at - currentAction.at;
-      strokeDurationMs = Math.max(0, rawGapMs - this.latencyCompensationMs);
+      strokeDurationMs = Math.max(0, rawGapMs);
     }
 
     // Convert “pos” range to 0..1 for Buttplug
@@ -137,5 +136,9 @@ export class FunscriptActionService {
     } catch (err) {
       console.error("Error sending action to device:", err);
     }
+  }
+
+  private getCurrentOffset(): number {
+    return this.configRepo.store.query((state) => state.scriptTimingOffsetMs);
   }
 }

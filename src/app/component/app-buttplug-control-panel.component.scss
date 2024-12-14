@@ -1,6 +1,16 @@
+/* app-buttplug-control-panel.component.scss */
+
+/* Optional: Maintain default color when timingOffset is 0 */
+:host ::ng-deep .ant-input-number-input {
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+
 .connection-card,
 .scanning-card,
 .devices-card {
+  margin-top: 1.5rem;
   margin-bottom: 1.5rem;
 }
 

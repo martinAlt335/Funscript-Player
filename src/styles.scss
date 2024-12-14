@@ -3,3 +3,18 @@
 @tailwind components;
 @tailwind utilities;
 @import '../node_modules/ng-zorro-antd/ng-zorro-antd.dark';
+
+.text-pink-500 .ant-input-number-input {
+  color: #ec4899!important;
+}
+
+.text-orange-500 .ant-input-number-input {
+  color: #f97316!important;
+}
+
+/* Maintain default color when no specific class is applied */
+.ant-input-number-input {
+  font-weight: bold;
+  color: inherit;
+  transition: color 0.3s ease;
+}
