@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Funscript } from 'funscript-utils/lib/types';
-import { Action } from 'funscript-utils/src/types';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ButtplugService } from './buttplug.service';
-import { DevicePreferencesService } from './device-preferences.service';
-import { ConfigRepository } from '../state/config/config.repository';
+import { Injectable } from "@angular/core";
+import { Funscript } from "funscript-utils/lib/types";
+import { Action } from "funscript-utils/src/types";
+import { BehaviorSubject, Observable } from "rxjs";
+import { ButtplugService } from "./buttplug.service";
+import { DevicePreferencesService } from "./device-preferences.service";
+import { ConfigRepository } from "../state/config/config.repository";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class FunscriptActionService {
   private actions: Action[] = [];
@@ -54,7 +54,7 @@ export class FunscriptActionService {
 
     if (actionIndex !== -1 && actionIndex !== this.lastActionIndex) {
       const action = this.actions[actionIndex];
-      this.dispatchAction(action, compensatedTime).then();
+      this.dispatchAction(action).then();
       this.lastActionIndex = actionIndex;
     }
   }
@@ -80,39 +80,62 @@ export class FunscriptActionService {
     return bestIndex;
   }
 
-  private async dispatchAction(
-    action: Action,
-    compensatedTime: number
-  ): Promise<void> {
+  private async dispatchAction(currentAction: Action): Promise<void> {
     if (!this.configRepo.sendActionsEnabled) {
       return;
     }
 
-    const speed = Math.min(1.0, Math.max(0, action.pos / 100));
-    const position = Math.min(1.0, Math.max(0, action.pos / 100));
+    // Find index of current action
+    const currentIndex = this.actions.indexOf(currentAction);
+    if (currentIndex < 0) {
+      return;
+    }
+
+    // Determine stroke duration from time difference to the next action
+    let strokeDurationMs = 500; // Default fallback if there's no "next" action
+    if (currentIndex < this.actions.length - 1) {
+      // Grab the next action
+      const nextAction = this.actions[currentIndex + 1];
+
+      // Calculate dynamic duration based on time gap
+      // Subtract latency compensation to help keep things in sync
+      const rawGapMs = nextAction.at - currentAction.at;
+      strokeDurationMs = Math.max(0, rawGapMs - this.latencyCompensationMs);
+    }
+
+    // Convert “pos” range to 0..1 for Buttplug
+    const position = Math.min(1, Math.max(0, currentAction.pos / 100));
+    const speed = position; // Vibrate/rotate often uses speed ~ position
 
     try {
       const devices = this.buttplugService.getDevices();
-      const preferences = this.devicePreferencesService.getPreferences();
+      const prefs = this.devicePreferencesService.getPreferences();
 
       for (const device of devices) {
-        const devicePref = preferences[device.index];
-        if (!devicePref?.enabled) continue;
+        const devicePref = prefs[device.index];
+        if (!devicePref || !devicePref.enabled) continue;
 
+        // Vibrate
         if (device.canVibrate && devicePref.useVibrate) {
           await this.buttplugService.vibrateDevice(device.index, speed);
         }
 
+        // Rotate
         if (device.canRotate && devicePref.useRotate) {
           await this.buttplugService.rotateDevice(device.index, speed, true);
         }
 
+        // Linear
         if (device.canLinear && devicePref.useLinear) {
-          await this.buttplugService.linearDevice(device.index, position, 500);
+          await this.buttplugService.linearDevice(
+            device.index,
+            position,
+            strokeDurationMs
+          );
         }
       }
-    } catch (e) {
-      console.error('Error sending action to device:', e);
+    } catch (err) {
+      console.error("Error sending action to device:", err);
     }
   }
 }
