@@ -83,7 +83,7 @@ import {
           <label nz-radio nzValue="external">
             External Server
             <nz-tooltip
-              nzTitle="Connect to an external Buttplug server using a WebSocket URL."
+              title="Connect to an external Buttplug server using a WebSocket URL."
             >
               <i
                 nz-icon
@@ -96,7 +96,7 @@ import {
           <label nz-radio nzValue="local">
             Local Server
             <nz-tooltip
-              nzTitle="Start a local in-browser Buttplug server without connecting to an external server."
+              title="Start a local in-browser Buttplug server without connecting to an external server."
             >
               <i
                 nz-icon
