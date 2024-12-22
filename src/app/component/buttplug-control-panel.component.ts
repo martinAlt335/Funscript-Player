@@ -26,6 +26,12 @@ import { NzIconDirective } from "ng-zorro-antd/icon";
 import { NzDropDownModule } from "ng-zorro-antd/dropdown";
 import { NzInputNumberComponent } from "ng-zorro-antd/input-number";
 import { NzAlertComponent } from "ng-zorro-antd/alert";
+import { NzSliderModule } from "ng-zorro-antd/slider";
+import {
+  NzTabComponent,
+  NzTabDirective,
+  NzTabSetComponent,
+} from "ng-zorro-antd/tabs";
 
 @Component({
   selector: "app-buttplug-control-panel",
@@ -50,14 +56,21 @@ import { NzAlertComponent } from "ng-zorro-antd/alert";
     NzDropDownModule,
     NzInputNumberComponent,
     NzAlertComponent,
+    NzSliderModule,
+    NzTabComponent,
+    NzTabDirective,
+    NzTabSetComponent,
   ],
   template: `
-    @let sendActionsEnabled = configRepo.sendActionsEnabled$ | async;
+    @let sendActionsEnabled = configRepo.sendActionsEnabled$ | async; @let
+    selectedConnectionType = configRepo.selectedConnectionType$ | async; @let
+    scriptTimingOffsetMs = (configRepo.scriptTimingOffsetMs$ | async)!; @let
+    externalUrl = (configRepo.externalUrl$ | async)!; @let strokeRange =
+    (configRepo.strokeRange$ | async)!; @let deviceResponseDelay =
+    (configRepo.deviceResponseDelayMs$ | async)!;
 
+    <!-- SERVER CONTROL -->
     <h2 class="text-lg">Server Control</h2>
-
-    @let selectedConnectionType = configRepo.selectedConnectionType$ | async;
-
     <nz-card class="connection-card">
       <form>
         <!-- Connection Type Radio Buttons -->
@@ -94,6 +107,18 @@ import { NzAlertComponent } from "ng-zorro-antd/alert";
             </nz-tooltip>
           </label>
         </nz-radio-group>
+
+        <!-- Warning if local server is chosen but no WebBluetooth -->
+        <div
+          *ngIf="selectedConnectionType === 'local' && !hasWebBluetooth"
+          class="mt-3"
+        >
+          <nz-alert
+            nzType="warning"
+            nzMessage="Web Bluetooth is not available in this browser or device, so the local server won't function properly."
+            nzShowIcon
+          ></nz-alert>
+        </div>
 
         <!-- External Server Input -->
         <div
@@ -162,69 +187,157 @@ import { NzAlertComponent } from "ng-zorro-antd/alert";
       </div>
     </nz-card>
 
-    <!-- Timing Offset Section -->
-    <nz-card class="my-2">
-      <div class="flex justify-between items-center">
-        <h3>🔧 Sync Adjustment</h3>
-        <nz-tooltip
-          nzTitle="Adjust the timing to synchronize device actions with the video."
-        >
-          <i
-            nz-icon
-            nzType="info-circle"
-            nzTheme="outline"
-            aria-label="Sync Adjustment Information"
-            class="cursor-pointer"
-          ></i>
-        </nz-tooltip>
-      </div>
+    <!-- ADVANCED SETTINGS IN TABS -->
+    <nz-card class="my-4 advanced-settings-card">
+      <h3 class="mb-2">Advanced Settings</h3>
+      <nz-tabset [nzAnimated]="false">
+        <!-- TAB 1: Timing Offset -->
+        <nz-tab nzTitle="Sync Adjustment">
+          <ng-template nz-tab>
+            <div class="flex items-center justify-between mt-4">
+              <div>
+                <h4 class="mb-2">Sync Adjustment (ms)</h4>
+                <p class="text-sm text-gray-300">
+                  This shifts <strong>when</strong> the actions from your script
+                  are triggered.<br />
+                  - A
+                  <strong class="text-pink-500">negative</strong> value fires
+                  commands <em>earlier</em> than normal.<br />
+                  - A
+                  <strong class="text-orange-500">positive</strong> value fires
+                  commands <em>later</em> than normal.<br /><br />
+                  <strong class="text-blue-500">Use this setting</strong> if
+                  your device’s movement starts too soon or too late compared to
+                  what you see on the screen. Adjusting this tries to match your
+                  device’s motion timing to the onscreen events.
+                </p>
+              </div>
+              <div class="flex items-center">
+                <nz-input-number
+                  [ngModel]="scriptTimingOffsetMs"
+                  (ngModelChange)="onTimingOffsetChange($event)"
+                  [nzMin]="-2000"
+                  [nzMax]="2000"
+                  [nzStep]="100"
+                  [nzPrecision]="0"
+                  [nzFormatter]="formatter"
+                  [nzParser]="parser"
+                  style="width: 120px;"
+                  aria-label="Script to Device Offset Input"
+                  [ngClass]="{
+                    'text-pink-500': scriptTimingOffsetMs < 0,
+                    'text-orange-500': scriptTimingOffsetMs > 0
+                  }"
+                ></nz-input-number>
+                <span class="ml-2 text-sm text-gray-400">(ms)</span>
+              </div>
+            </div>
 
-      <p class="text-sm text-gray-300 mt-2">
-        Use this setting to
-        <strong class="text-yellow-500">reduce lag</strong> between the video
-        and device actions.
-        <br />
-        <strong class="text-pink-500">Negative values</strong> fire actions
-        <em>earlier</em>;
-        <strong class="text-orange-500">Positive values</strong> fire them
-        <em>later</em>.
-      </p>
+            <p class="text-xs text-gray-400 mt-2">
+              Example: Enter <strong>-1000</strong> ms to trigger actions 1
+              second earlier.
+            </p>
 
-      <div class="flex items-center mt-4">
-        <nz-input-number
-          [ngModel]="timingOffset"
-          (ngModelChange)="onTimingOffsetChange($event)"
-          [nzMin]="-2000"
-          [nzMax]="2000"
-          [nzStep]="100"
-          [nzPrecision]="0"
-          [nzFormatter]="formatter"
-          [nzParser]="parser"
-          style="width: 200px;"
-          aria-label="Script to Device Offset Input"
-          [ngClass]="{
-            'text-pink-500': timingOffset < 0,
-            'text-orange-500': timingOffset > 0
-          }"
-        ></nz-input-number>
-        <span class="ml-3 text-sm text-gray-400">(ms)</span>
-      </div>
+            <nz-alert
+              *ngIf="scriptTimingOffsetMs !== 0"
+              nzType="info"
+              nzMessage="If your device’s actions line up too soon or too late, adjust this offset to compensate."
+              nzShowIcon
+              class="mt-3"
+            ></nz-alert>
+          </ng-template>
+        </nz-tab>
 
-      <p class="text-xs text-gray-400 mt-1">
-        Example: Enter <strong>-1000</strong> to trigger actions 1 second
-        earlier.
-      </p>
+        <!-- TAB 2: Device Response Delay -->
+        <nz-tab nzTitle="Device Response Delay">
+          <ng-template nz-tab>
+            <div class="flex items-center justify-between mt-4">
+              <div>
+                <h4 class="mb-2">Device Response Delay (ms)</h4>
+                <p class="text-sm text-gray-300">
+                  This modifies <strong>how long</strong> each stroke (or
+                  movement) takes, effectively compensating for a device's
+                  built-in lag or speed limits.<br /><br />
+                  - A <strong class="text-pink-500">negative</strong> value
+                  shortens each stroke’s duration (makes your device move more
+                  quickly).<br />
+                  - A <strong class="text-orange-500">positive</strong> value
+                  lengthens each stroke’s duration, giving slower devices more
+                  time to finish each movement.<br /><br />
+                  <strong class="text-blue-500">Use this setting</strong> if
+                  your device physically cannot complete movements quickly
+                  enough (or too quickly) to match the script’s timing. You’re
+                  compensating for actual device movement speed.
+                </p>
+              </div>
 
-      <nz-alert
-        *ngIf="timingOffset !== 0"
-        nzType="info"
-        nzMessage="Remember to test different values to find the best offset for your setup."
-        nzShowIcon
-        class="mt-3"
-      ></nz-alert>
+              <div class="flex items-center">
+                <nz-input-number
+                  [ngModel]="deviceResponseDelay"
+                  (ngModelChange)="onDeviceResponseDelayChange($event)"
+                  [nzMin]="-2000"
+                  [nzMax]="2000"
+                  [nzStep]="100"
+                  [nzPrecision]="0"
+                  [nzFormatter]="formatter"
+                  [nzParser]="parser"
+                  style="width: 120px;"
+                  aria-label="Device Response Delay Slider"
+                  [ngClass]="{
+                    'text-pink-500': deviceResponseDelay < 0,
+                    'text-orange-500': deviceResponseDelay > 0
+                  }"
+                ></nz-input-number>
+                <span class="ml-2 text-sm text-gray-400">(ms)</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-gray-400 mt-3">
+              Example: Enter <strong>1000</strong> to add 1 second to each
+              stroke’s duration for slower devices.
+            </p>
+
+            <nz-alert
+              nzType="info"
+              nzMessage="Tweak this if your device physically lags behind or rushes through movements."
+              nzShowIcon
+              class="mt-3"
+            ></nz-alert>
+          </ng-template>
+        </nz-tab>
+
+        <!-- TAB 3: Stroke Range -->
+        <nz-tab nzTitle="Stroke Range">
+          <ng-template nz-tab>
+            <div class="flex items-center justify-between mt-4">
+              <div>
+                <h4 class="mb-2">Stroke Range (%)</h4>
+                <p class="text-sm text-gray-300">
+                  Adjust the maximum stroke length for linear devices. Default
+                  is 100% for a full range of movement.
+                </p>
+              </div>
+              <div class="flex items-center">
+                <nz-slider
+                  [ngModel]="strokeRange"
+                  (ngModelChange)="onStrokeRangeChange($event)"
+                  [nzMin]="1"
+                  [nzMax]="100"
+                  nzTooltipVisible="never"
+                  style="width: 150px;"
+                  aria-label="Stroke Range Slider"
+                ></nz-slider>
+                <span class="ml-3 text-sm text-gray-400"
+                  >{{ strokeRange }}%</span
+                >
+              </div>
+            </div>
+          </ng-template>
+        </nz-tab>
+      </nz-tabset>
     </nz-card>
 
-    <!-- Scanning Controls -->
+    <!-- SCANNING CONTROLS -->
     <nz-card class="scanning-card">
       <h3>Device Scanning</h3>
       <div class="scanning-buttons">
@@ -254,7 +367,7 @@ import { NzAlertComponent } from "ng-zorro-antd/alert";
       </span>
     </nz-card>
 
-    <!-- Emergency Stop Section -->
+    <!-- EMERGENCY STOP -->
     <div class="emergency-section">
       <div
         class="emergency-stop-section cursor-pointer"
@@ -293,7 +406,7 @@ import { NzAlertComponent } from "ng-zorro-antd/alert";
       </div>
     </div>
 
-    <!-- Devices List -->
+    <!-- DEVICES LIST -->
     <nz-card class="devices-card">
       <h3>Connected Devices</h3>
       <nz-list nzBordered="true" *ngIf="devices.length; else noDevices">
@@ -406,39 +519,14 @@ import { NzAlertComponent } from "ng-zorro-antd/alert";
       </ng-template>
     </nz-card>
   `,
-  styles: [
-    `
-      .flex {
-        display: flex;
-      }
-      .items-center {
-        align-items: center;
-      }
-      .gap-2 {
-        gap: 0.5rem;
-      }
-      .mt-2 {
-        margin-top: 0.5rem;
-      }
-      .mt-4 {
-        margin-top: 1rem;
-      }
-      .w-full {
-        width: 100%;
-      }
-    `,
-  ],
 })
 export class ButtplugControlPanelComponent implements OnInit {
-  externalUrl!: string;
-  timingOffset!: number;
   connectionState = ButtplugConnectionState.DISCONNECTED;
   isConnecting = false;
   isScanning = false;
   devices: ButtplugDeviceInfo[] = [];
   connectedUrl: string | undefined;
 
-  // Store device preferences in component state
   devicePrefs: Record<
     number,
     {
@@ -449,7 +537,6 @@ export class ButtplugControlPanelComponent implements OnInit {
     }
   > = {};
 
-  // For form validation
   urlInvalid: boolean = false;
 
   constructor(
@@ -496,12 +583,6 @@ export class ButtplugControlPanelComponent implements OnInit {
       this.updateGlobalPreferences();
     });
 
-    // Subscribe to configuration changes
-    this.configRepo.store.subscribe((config) => {
-      this.externalUrl = config.externalUrl;
-      this.timingOffset = config.scriptTimingOffsetMs;
-    });
-
     // Initial load of global preferences
     this.updateGlobalPreferences();
   }
@@ -521,7 +602,7 @@ export class ButtplugControlPanelComponent implements OnInit {
   // Compute whether the Connect button should be enabled
   get canConnect(): boolean {
     if (this.configRepo.selectedConnectionType === "external") {
-      return this.externalUrl.trim().length > 0 && !this.urlInvalid;
+      return this.configRepo.externalUrl.trim().length > 0 && !this.urlInvalid;
     }
     if (this.configRepo.selectedConnectionType === "local") {
       return this.hasWebBluetooth;
@@ -544,14 +625,14 @@ export class ButtplugControlPanelComponent implements OnInit {
 
   connect(): void {
     if (this.configRepo.selectedConnectionType === "external") {
-      if (!this.validateUrl(this.externalUrl)) {
+      if (!this.validateUrl(this.configRepo.externalUrl)) {
         this.urlInvalid = true;
         setTimeout(() => (this.urlInvalid = false), 2000);
         return;
       }
       this.urlInvalid = false;
       this.buttplugService
-        .connectToExternalServer(this.externalUrl)
+        .connectToExternalServer(this.configRepo.externalUrl)
         .catch((err) => {
           console.error("Failed to connect to external server:", err);
         });
@@ -636,6 +717,14 @@ export class ButtplugControlPanelComponent implements OnInit {
 
   onTimingOffsetChange(newOffset: number) {
     this.configRepo.updateState({ scriptTimingOffsetMs: newOffset });
+  }
+
+  onStrokeRangeChange(newVal: number) {
+    this.configRepo.updateState({ strokeRange: newVal });
+  }
+
+  onDeviceResponseDelayChange(newVal: number) {
+    this.configRepo.updateState({ deviceResponseDelayMs: newVal });
   }
 
   updateDevicePreferences(device: ButtplugDeviceInfo): void {

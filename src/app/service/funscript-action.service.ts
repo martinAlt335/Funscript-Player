@@ -40,7 +40,6 @@ export class FunscriptActionService {
 
   removeFunscript() {
     this.actions = [];
-    this.actions = [];
     this.funscriptDurationSubject.next(0);
     this.currentFunscriptSubject.next(undefined);
   }
@@ -94,17 +93,29 @@ export class FunscriptActionService {
     // Determine stroke duration from time difference to the next action
     let strokeDurationMs = 500; // Default fallback if there's no "next" action
     if (currentIndex < this.actions.length - 1) {
-      // Grab the next action
       const nextAction = this.actions[currentIndex + 1];
-
-      // Calculate dynamic duration based on time gap
       const rawGapMs = nextAction.at - currentAction.at;
-      strokeDurationMs = Math.max(0, rawGapMs);
+
+      // Gather device response delay from config
+      const deviceResponseDelayMs = this.configRepo.store.query(
+        (state) => state.deviceResponseDelayMs
+      );
+      // Add deviceResponseDelayMs to the raw gap
+      strokeDurationMs = Math.max(0, rawGapMs + deviceResponseDelayMs);
     }
 
-    // Convert “pos” range to 0..1 for Buttplug
-    const position = Math.min(1, Math.max(0, currentAction.pos / 100));
-    const speed = position; // Vibrate/rotate often uses speed ~ position
+    // Convert “pos” range to 0..1
+    let position = Math.min(1, Math.max(0, currentAction.pos / 100));
+
+    // Read strokeRange from config and scale
+    const strokeRange = this.configRepo.store.query(
+      (state) => state.strokeRange
+    );
+    const strokeScale = strokeRange / 100.0;
+    position = position * strokeScale;
+
+    // Vibrate/rotate speed is still based purely on position
+    const speed = Math.min(1, Math.max(0, currentAction.pos / 100));
 
     try {
       const devices = this.buttplugService.getDevices();

@@ -9,37 +9,55 @@ export enum ConnectionType {
 }
 
 export interface ConfigState {
+  deviceResponseDelayMs: number;
   externalUrl: string;
-  sendActionsEnabled: boolean;
-  selectedConnectionType: ConnectionType;
   scriptTimingOffsetMs: number;
+  selectedConnectionType: ConnectionType;
+  sendActionsEnabled: boolean;
+  strokeRange: number;
 }
 
 @Injectable({ providedIn: "root" })
 export class ConfigRepository {
   store: Store<any, ConfigState>;
-  sendActionsEnabled$!: Observable<boolean>;
+
+  deviceResponseDelayMs$!: Observable<number>;
   externalUrl$!: Observable<string>;
+  scriptTimingOffsetMs$!: Observable<number>;
   selectedConnectionType$!: Observable<"external" | "local">;
+  sendActionsEnabled$!: Observable<boolean>;
+  strokeRange$!: Observable<number>;
 
   constructor() {
     this.store = this.createStore();
     this.persistState();
-    this.sendActionsEnabled$ = this.store.pipe(
-      select((state) => state.sendActionsEnabled)
+
+    this.deviceResponseDelayMs$ = this.store.pipe(
+      select((state) => state.deviceResponseDelayMs)
     );
     this.externalUrl$ = this.store.pipe(select((state) => state.externalUrl));
+    this.scriptTimingOffsetMs$ = this.store.pipe(
+      select((state) => state.scriptTimingOffsetMs)
+    );
     this.selectedConnectionType$ = this.store.pipe(
       select((state) => state.selectedConnectionType)
     );
+    this.sendActionsEnabled$ = this.store.pipe(
+      select((state) => state.sendActionsEnabled)
+    );
+    this.strokeRange$ = this.store.pipe(select((state) => state.strokeRange));
   }
 
-  get sendActionsEnabled() {
-    return this.store.query((state) => state.sendActionsEnabled);
+  get externalUrl() {
+    return this.store.query((state) => state.externalUrl);
   }
 
   get selectedConnectionType() {
     return this.store.query((state) => state.selectedConnectionType);
+  }
+
+  get sendActionsEnabled() {
+    return this.store.query((state) => state.sendActionsEnabled);
   }
 
   createStore() {
@@ -50,6 +68,8 @@ export class ConfigRepository {
         sendActionsEnabled: true,
         selectedConnectionType: ConnectionType.Local,
         scriptTimingOffsetMs: -200,
+        strokeRange: 100,
+        deviceResponseDelayMs: 0,
       })
     );
   }
