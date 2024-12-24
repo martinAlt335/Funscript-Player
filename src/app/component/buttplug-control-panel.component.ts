@@ -189,12 +189,12 @@ import {
 
     <!-- ADVANCED SETTINGS IN TABS -->
     <nz-card class="my-4 advanced-settings-card">
-      <h3 class="mb-2">Advanced Settings</h3>
+      <h3 class="mb-2">Settings</h3>
       <nz-tabset [nzAnimated]="false">
         <!-- TAB 1: Timing Offset -->
         <nz-tab nzTitle="Sync Adjustment">
           <ng-template nz-tab>
-            <div class="flex items-center justify-between mt-4">
+            <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
               <div>
                 <h4 class="mb-2">Sync Adjustment (ms)</h4>
                 <p class="text-sm text-gray-300">
@@ -239,7 +239,6 @@ import {
             </p>
 
             <nz-alert
-              *ngIf="scriptTimingOffsetMs !== 0"
               nzType="info"
               nzMessage="If your device’s actions line up too soon or too late, adjust this offset to compensate."
               nzShowIcon
@@ -249,15 +248,15 @@ import {
         </nz-tab>
 
         <!-- TAB 2: Device Response Delay -->
-        <nz-tab nzTitle="Device Response Delay">
+        <nz-tab nzTitle="Device Response">
           <ng-template nz-tab>
-            <div class="flex items-center justify-between mt-4">
+            <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
               <div>
-                <h4 class="mb-2">Device Response Delay (ms)</h4>
+                <h4 class="mb-2">Device Response (ms)</h4>
                 <p class="text-sm text-gray-300">
-                  This modifies <strong>how long</strong> each stroke (or
-                  movement) takes, effectively compensating for a device's
-                  built-in lag or speed limits.<br /><br />
+                  This modifies <strong>how long</strong> each movement takes,
+                  effectively compensating for a device's built-in lag or speed
+                  limits.<br /><br />
                   - A <strong class="text-pink-500">negative</strong> value
                   shortens each stroke’s duration (makes your device move more
                   quickly).<br />
@@ -309,7 +308,7 @@ import {
         <!-- TAB 3: Stroke Range -->
         <nz-tab nzTitle="Stroke Range">
           <ng-template nz-tab>
-            <div class="flex items-center justify-between mt-4">
+            <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
               <div>
                 <h4 class="mb-2">Stroke Range (%)</h4>
                 <p class="text-sm text-gray-300">
