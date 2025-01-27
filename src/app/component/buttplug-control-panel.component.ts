@@ -216,8 +216,6 @@ import {
                 <nz-input-number
                   [ngModel]="scriptTimingOffsetMs"
                   (ngModelChange)="onTimingOffsetChange($event)"
-                  [nzMin]="-2000"
-                  [nzMax]="2000"
                   [nzStep]="100"
                   [nzPrecision]="0"
                   [nzFormatter]="formatter"
@@ -274,8 +272,6 @@ import {
                 <nz-input-number
                   [ngModel]="deviceResponseDelay"
                   (ngModelChange)="onDeviceResponseDelayChange($event)"
-                  [nzMin]="-2000"
-                  [nzMax]="2000"
                   [nzStep]="100"
                   [nzPrecision]="0"
                   [nzFormatter]="formatter"
