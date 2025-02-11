@@ -51,7 +51,7 @@ export class PlaybackContainerComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.add(
-      this.playbackState.videoUrl$.subscribe((url) => {
+      this.playbackState.mediaUrl$.subscribe((url) => {
         this.videoUrl = url;
         this.mimeType = this.getMimeTypeFromUrl(url);
       })

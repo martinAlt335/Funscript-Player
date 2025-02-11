@@ -1,11 +1,7 @@
 import { Component, EventEmitter, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import {
-  NzUploadChangeParam,
-  NzUploadComponent,
-  NzUploadXHRArgs,
-} from "ng-zorro-antd/upload";
+import { NzUploadChangeParam, NzUploadComponent, NzUploadXHRArgs, } from "ng-zorro-antd/upload";
 import { NzIconDirective } from "ng-zorro-antd/icon";
 import { NzButtonComponent } from "ng-zorro-antd/button";
 import { NzInputDirective } from "ng-zorro-antd/input";
@@ -13,7 +9,7 @@ import { NzTagComponent } from "ng-zorro-antd/tag";
 import { Subscription } from "rxjs";
 
 @Component({
-  selector: "app-video-upload",
+  selector: "app-media-upload",
   standalone: true,
   imports: [
     CommonModule,
@@ -24,19 +20,19 @@ import { Subscription } from "rxjs";
     NzInputDirective,
     NzTagComponent,
   ],
-  templateUrl: "./video-upload.component.html",
-  styleUrls: ["./video-upload.component.scss"],
+  templateUrl: "./media-upload.component.html",
+  styleUrls: ["./media-upload.component.scss"],
 })
-export class VideoUploadComponent {
-  @Output() videoSelected = new EventEmitter<{
+export class MediaUploadComponent {
+  @Output() mediaSelected = new EventEmitter<{
     fileName?: string;
-    videoUrl: string;
+    mediaUrl: string;
   }>();
 
-  @Output() videoDeleted = new EventEmitter<void>(); // Emit when video is deleted
+  @Output() mediaDeleted = new EventEmitter<void>(); // Emit when media is deleted
 
   sourceUrl: string = "";
-  videoFileName?: string; // Track the uploaded video file name
+  mediaFileName?: string; // Track the uploaded media file name
 
   customRequest(item: NzUploadXHRArgs) {
     setTimeout(() => {
@@ -49,23 +45,23 @@ export class VideoUploadComponent {
     if (file.status === "done") {
       if (file.originFileObj) {
         const url = URL.createObjectURL(file.originFileObj);
-        this.videoSelected.emit({ fileName: file.name, videoUrl: url });
-        this.videoFileName = file.name;
+        this.mediaSelected.emit({ fileName: file.name, mediaUrl: url });
+        this.mediaFileName = file.name;
       }
     }
   }
 
   onUrlSubmit(): void {
     if (this.sourceUrl.trim()) {
-      this.videoSelected.emit({ videoUrl: this.sourceUrl.trim() });
-      this.videoFileName = "URL Video";
+      this.mediaSelected.emit({ mediaUrl: this.sourceUrl.trim() });
+      this.mediaFileName = "URL Media";
     }
   }
 
-  deleteVideo(): void {
-    this.videoFileName = undefined;
+  deleteMedia(): void {
+    this.mediaFileName = undefined;
     this.sourceUrl = "";
-    this.videoSelected.emit({ videoUrl: "" });
-    this.videoDeleted.emit();
+    this.mediaSelected.emit({ mediaUrl: "" });
+    this.mediaDeleted.emit();
   }
 }

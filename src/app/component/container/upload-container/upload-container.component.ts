@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { FunscriptUploadComponent } from '../../pure/funscript-upload/funscript-upload.component';
-import { VideoUploadComponent } from '../../pure/video-upload/video-upload.component';
+import { MediaUploadComponent } from '../../pure/media-upload/media-upload.component';
 import { FunscriptActionService } from '../../../service/funscript-action.service';
 import { PlaybackStateService } from '../../../service/playback-state.service';
 
@@ -13,7 +13,7 @@ import { PlaybackStateService } from '../../../service/playback-state.service';
     CommonModule,
     NzGridModule,
     FunscriptUploadComponent,
-    VideoUploadComponent,
+    MediaUploadComponent,
   ],
   templateUrl: './upload-container.component.html',
   styleUrls: ['./upload-container.component.scss'],
@@ -30,9 +30,9 @@ export class UploadContainerComponent {
     }
   }
 
-  onVideoSelected(event: { fileName?: string; videoUrl: string }) {
-    if (event.videoUrl) {
-      this.playbackState.setVideoUrl(event.videoUrl);
+  onMediaSelected(event: { fileName?: string; mediaUrl: string }) {
+    if (event.mediaUrl) {
+      this.playbackState.setMediaUrl(event.mediaUrl);
     }
   }
 
@@ -41,6 +41,6 @@ export class UploadContainerComponent {
   }
 
   onVideoDeleted(): void {
-    this.playbackState.setVideoUrl('');
+    this.playbackState.setMediaUrl('');
   }
 }

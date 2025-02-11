@@ -7,9 +7,9 @@
   </nz-col>
 
   <nz-col [nzSpan]="12">
-    <app-video-upload
-      (videoSelected)="onVideoSelected($event)"
-      (videoDeleted)="onVideoDeleted()"
-    ></app-video-upload>
+    <app-media-upload
+      (mediaSelected)="onMediaSelected($event)"
+      (mediaDeleted)="onVideoDeleted()"
+    ></app-media-upload>
   </nz-col>
 </nz-row>

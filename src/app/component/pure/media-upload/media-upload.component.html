@@ -10,7 +10,7 @@
   <div>
     <nz-upload
       nzType="drag"
-      nzAccept="video/*"
+      nzAccept="audio/*,video/*"
       [nzCustomRequest]="customRequest"
       [nzShowUploadList]="false"
       (nzChange)="handleFileUpload($event)"
@@ -33,13 +33,13 @@
   </div>
 
   <!-- Loaded Video Notification -->
-  <div class="flex items-center mt-2 overflow-x-auto" *ngIf="videoFileName">
+  <div class="flex items-center mt-2 overflow-x-auto" *ngIf="mediaFileName">
     <nz-tag nzColor="success" class="flex items-center">
       <span class="md:text-lg">
         <span nz-icon nzType="check-circle"></span>
         <span class="ml-2">
           Loaded
-          {{ "video: " + videoFileName }}
+          {{ "video: " + mediaFileName }}
         </span>
       </span>
     </nz-tag>
@@ -49,7 +49,7 @@
       nzShape="circle"
       nzDanger
       class="ml-2"
-      (click)="deleteVideo()"
+      (click)="deleteMedia()"
       aria-label="Delete Video Button"
     >
       <span nz-icon nzType="delete"></span>
