@@ -114,8 +114,14 @@ export class FunscriptActionService {
     const strokeScale = strokeRange / 100.0;
     position = position * strokeScale;
 
-    // Vibrate/rotate speed is still based purely on position
-    const speed = Math.min(1, Math.max(0, currentAction.pos / 100));
+    // For vibrate devices: if same pos as the previous action => speed=0, else speed=pos/100
+    let speed = Math.min(1, Math.max(0, currentAction.pos / 100));
+    if (currentIndex > 0) {
+      let prevPos = this.actions[currentIndex - 1].pos;
+      if (Math.abs(currentAction.pos - prevPos) < 0.00001) {
+        speed = 0;
+      }
+    }
 
     try {
       const devices = this.buttplugService.getDevices();
