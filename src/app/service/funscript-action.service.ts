@@ -10,6 +10,8 @@ import { ConfigRepository } from "../state/config/config.repository";
   providedIn: "root",
 })
 export class FunscriptActionService {
+  public invertFunscriptActions = false;
+
   private actions: Action[] = [];
   private lastActionIndex = -1;
 
@@ -106,6 +108,11 @@ export class FunscriptActionService {
 
     // Convert “pos” range to 0..1
     let position = Math.min(1, Math.max(0, currentAction.pos / 100));
+
+    // Apply inversion if enabled
+    if (this.invertFunscriptActions) {
+      position = 1 - position;
+    }
 
     // Read strokeRange from config and scale
     const strokeRange = this.configRepo.store.query(
