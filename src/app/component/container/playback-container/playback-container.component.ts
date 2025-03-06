@@ -9,6 +9,8 @@ import { Subscription } from 'rxjs';
 import { ButtplugService } from '../../../service/buttplug.service';
 import { ConfigRepository } from '../../../state/config/config.repository';
 import { Funscript } from 'funscript-utils/lib/types';
+import { NzSwitchComponent } from 'ng-zorro-antd/switch';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-playback-container',
@@ -18,6 +20,8 @@ import { Funscript } from 'funscript-utils/lib/types';
     FunscriptHeatmapComponent,
     FunscriptPlaybackControllerComponent,
     VideoPlayerComponent,
+    NzSwitchComponent,
+    FormsModule,
   ],
   templateUrl: './playback-container.component.html',
   styleUrls: ['./playback-container.component.scss'],
@@ -31,7 +35,7 @@ export class PlaybackContainerComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
-    private funscriptService: FunscriptActionService,
+    public funscriptService: FunscriptActionService,
     private playbackState: PlaybackStateService,
     private buttplugService: ButtplugService,
     private configRepo: ConfigRepository

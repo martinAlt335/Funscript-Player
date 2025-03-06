@@ -24,4 +24,18 @@
       [funscript]="funscript"
     ></app-funscript-heatmap>
   </div>
+
+    <div class="md:max-w-2xl mx-auto flex items-center justify-between mt-2" *ngIf="funscript">
+        <div class="flex items-center">
+            <span class="mr-2">Invert Script:</span>
+            <nz-switch
+                [(ngModel)]="funscriptService.invertFunscriptActions"
+                nzCheckedChildren="On"
+                nzUnCheckedChildren="Off">
+            </nz-switch>
+        </div>
+        <div class="text-sm text-gray-400">
+            Toggle if the script plays upside down
+        </div>
+    </div>
 </div>
