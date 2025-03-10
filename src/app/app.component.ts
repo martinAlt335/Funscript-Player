@@ -5,17 +5,19 @@ import { NzCardComponent } from 'ng-zorro-antd/card';
 import { ButtplugControlPanelComponent } from './component/buttplug-control-panel.component';
 import { UploadContainerComponent } from './component/container/upload-container/upload-container.component';
 import { PlaybackContainerComponent } from './component/container/playback-container/playback-container.component';
+import { AngularRoastModule } from 'ngx-roast-me';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    NzCardComponent,
-    ButtplugControlPanelComponent,
-    UploadContainerComponent,
-    PlaybackContainerComponent,
-  ],
+    imports: [
+        RouterOutlet,
+        NzCardComponent,
+        ButtplugControlPanelComponent,
+        UploadContainerComponent,
+        PlaybackContainerComponent,
+        AngularRoastModule,
+    ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

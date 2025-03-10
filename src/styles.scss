@@ -3,6 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 @import '../node_modules/ng-zorro-antd/ng-zorro-antd.dark';
+@import "../node_modules/ngx-roast-me/lib-styles.scss";
 
 .text-pink-500 .ant-input-number-input {
   color: #ec4899!important;
