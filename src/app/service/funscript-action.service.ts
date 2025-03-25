@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { ButtplugService } from "./buttplug.service";
 import { DevicePreferencesService } from "./device-preferences.service";
 import { ConfigRepository } from "../state/config/config.repository";
+import { DiagnosticService } from "ngx-roast-me";
 
 @Injectable({
   providedIn: "root",
@@ -27,7 +28,8 @@ export class FunscriptActionService {
   constructor(
     private configRepo: ConfigRepository,
     private buttplugService: ButtplugService,
-    private devicePreferencesService: DevicePreferencesService
+    private devicePreferencesService: DevicePreferencesService,
+    private diagnosticService: DiagnosticService,
   ) {}
 
   loadFunscript(funscript: Funscript): void {
@@ -158,7 +160,7 @@ export class FunscriptActionService {
         }
       }
     } catch (err) {
-      console.error("Error sending action to device:", err);
+      this.diagnosticService.logError("Error sending action to device:", err);
     }
   }
 

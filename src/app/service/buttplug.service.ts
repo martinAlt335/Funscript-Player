@@ -9,6 +9,7 @@ import {
 } from 'buttplug';
 import { ButtplugWasmClientConnector } from 'buttplug-wasm/dist/buttplug-wasm.mjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { DiagnosticService } from "ngx-roast-me";
 
 export interface ButtplugDeviceInfo {
   index: number;
@@ -47,7 +48,10 @@ export class ButtplugService {
   public readonly devices$: Observable<ButtplugDeviceInfo[]> =
     this.devicesSubject.asObservable();
 
-  constructor(private message: NzMessageService) {}
+  constructor(
+      private diagnosticService: DiagnosticService,
+      private message: NzMessageService
+  ) {}
 
   public getCurrentConnectionUrl(): string | undefined {
     // If using external connector, store the URL when connecting:
@@ -78,7 +82,7 @@ export class ButtplugService {
       await this.client.connect(connector);
       this.connectionStateSubject.next(ButtplugConnectionState.CONNECTED);
     } catch (e) {
-      console.error('Failed to connect to external server:', e);
+      this.diagnosticService.logError('Failed to connect to external server:', e);
       this.connectionStateSubject.next(ButtplugConnectionState.DISCONNECTED);
       throw e;
     }
@@ -101,7 +105,7 @@ export class ButtplugService {
       await this.client.connect(connector);
       this.connectionStateSubject.next(ButtplugConnectionState.CONNECTED);
     } catch (e) {
-      console.error('Failed to connect to local WASM server:', e);
+      this.diagnosticService.logError('Failed to connect to local WASM server:', e);
       this.connectionStateSubject.next(ButtplugConnectionState.DISCONNECTED);
       throw e;
     }
@@ -115,7 +119,7 @@ export class ButtplugService {
       try {
         await this.client.disconnect();
       } catch (e) {
-        console.warn('Error during disconnect:', e);
+        this.diagnosticService.logWarning('Error during disconnect:', e);
       }
     }
     this.cleanupClient();
@@ -235,7 +239,7 @@ export class ButtplugService {
           await bpDevice.linear(0.01, 500);
         }
       } catch (e) {
-        console.error(`Error sending gentle command before stop:`, e);
+        this.diagnosticService.logError(`Error sending gentle command before stop:`, e);
       }
     }
 
@@ -244,7 +248,7 @@ export class ButtplugService {
       async () =>
         await bpDevice
           .stop()
-          .catch((e) => console.warn(`Stop command error:`, e)),
+          .catch((e) => this.diagnosticService.logWarning(`Stop command error:`, e)),
       1000
     );
   }
@@ -273,14 +277,14 @@ export class ButtplugService {
           await bpDevice.linear(0.01, 500);
         }
       } catch (e) {
-        console.error(`Error sending gentle command before stopAll:`, e);
+        this.diagnosticService.logError(`Error sending gentle command before stopAll:`, e);
       }
 
       setTimeout(
         async () =>
           await bpDevice
             .stop()
-            .catch((e) => console.warn(`StopAll command error:`, e)),
+            .catch((e) => this.diagnosticService.logWarning(`StopAll command error:`, e)),
         1000
       );
     }
@@ -353,11 +357,11 @@ export class ButtplugService {
 
   private handleDeviceCommandError(e: unknown, command: string): void {
     if (e instanceof ButtplugDeviceError) {
-      console.error(`Device error on ${command}:`, e.message);
+      this.diagnosticService.logError(`Device error on ${command}:`, e.message);
     } else if (e instanceof ButtplugError) {
-      console.error(`Buttplug error on ${command}:`, e.message);
+      this.diagnosticService.logError(`Buttplug error on ${command}:`, e.message);
     } else {
-      console.error(`Unknown error on ${command}:`, e);
+      this.diagnosticService.logError(`Unknown error on ${command}:`, e);
     }
   }
 }

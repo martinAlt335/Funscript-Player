@@ -1,20 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import {
-  ButtplugConnectionState,
-  ButtplugDeviceInfo,
-  ButtplugService,
-} from "../service/buttplug.service";
+import { ButtplugConnectionState, ButtplugDeviceInfo, ButtplugService, } from "../service/buttplug.service";
 import { FormsModule } from "@angular/forms";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzInputModule } from "ng-zorro-antd/input";
 import { NzSwitchModule } from "ng-zorro-antd/switch";
 import { NzListModule } from "ng-zorro-antd/list";
 import { NzSpinModule } from "ng-zorro-antd/spin";
-import {
-  ConfigRepository,
-  ConnectionType,
-} from "../state/config/config.repository";
+import { ConfigRepository, ConnectionType, } from "../state/config/config.repository";
 import { DevicePreferencesService } from "../service/device-preferences.service";
 import { NzTagComponent } from "ng-zorro-antd/tag";
 import { NzToolTipComponent } from "ng-zorro-antd/tooltip";
@@ -27,11 +20,8 @@ import { NzDropDownModule } from "ng-zorro-antd/dropdown";
 import { NzInputNumberComponent } from "ng-zorro-antd/input-number";
 import { NzAlertComponent } from "ng-zorro-antd/alert";
 import { NzSliderModule } from "ng-zorro-antd/slider";
-import {
-  NzTabComponent,
-  NzTabDirective,
-  NzTabSetComponent,
-} from "ng-zorro-antd/tabs";
+import { NzTabComponent, NzTabDirective, NzTabSetComponent, } from "ng-zorro-antd/tabs";
+import { DiagnosticService } from "ngx-roast-me";
 
 @Component({
   selector: "app-buttplug-control-panel",
@@ -537,7 +527,8 @@ export class ButtplugControlPanelComponent implements OnInit {
   constructor(
     public configRepo: ConfigRepository,
     private buttplugService: ButtplugService,
-    private devicePreferencesService: DevicePreferencesService
+    private devicePreferencesService: DevicePreferencesService,
+    private diagnosticService: DiagnosticService,
   ) {}
 
   ngOnInit(): void {
@@ -629,24 +620,24 @@ export class ButtplugControlPanelComponent implements OnInit {
       this.buttplugService
         .connectToExternalServer(this.configRepo.externalUrl)
         .catch((err) => {
-          console.error("Failed to connect to external server:", err);
+          this.diagnosticService.logError("Failed to connect to external server:", err);
         });
     } else if (this.configRepo.selectedConnectionType === "local") {
       this.buttplugService.connectToLocalServer().catch((err) => {
-        console.error("Failed to connect to local server:", err);
+        this.diagnosticService.logError("Failed to connect to local server:", err);
       });
     }
   }
 
   disconnect(): void {
     this.buttplugService.disconnect().catch((err) => {
-      console.error("Failed to disconnect:", err);
+      this.diagnosticService.logError("Failed to disconnect:", err);
     });
   }
 
   startScanning(): void {
     this.buttplugService.startScanning().catch((err) => {
-      console.error("Failed to start scanning:", err);
+      this.diagnosticService.logError("Failed to start scanning:", err);
     });
   }
 
@@ -654,7 +645,7 @@ export class ButtplugControlPanelComponent implements OnInit {
     this.buttplugService
       .stopScanning()
       .catch((err) => {
-        console.error("Failed to stop scanning:", err);
+        this.diagnosticService.logError("Failed to stop scanning:", err);
       })
       .then(() => (this.isScanning = false));
   }
@@ -666,7 +657,7 @@ export class ButtplugControlPanelComponent implements OnInit {
         setTimeout(() => this.buttplugService.stopDevice(device.index), 1000);
       })
       .catch((err) => {
-        console.error("Vibrate test failed:", err);
+        this.diagnosticService.logError("Vibrate test failed:", err);
       });
   }
 
@@ -676,7 +667,7 @@ export class ButtplugControlPanelComponent implements OnInit {
       .then(() =>
         setTimeout(() => this.buttplugService.stopDevice(device.index), 1000)
       )
-      .catch((err) => console.error("Rotate test failed:", err));
+      .catch((err) => this.diagnosticService.logError("Rotate test failed:", err));
   }
 
   linearTest(device: ButtplugDeviceInfo): void {
@@ -685,7 +676,7 @@ export class ButtplugControlPanelComponent implements OnInit {
       .then(() =>
         setTimeout(() => this.buttplugService.stopDevice(device.index), 1000)
       )
-      .catch((err) => console.error("Linear test failed:", err));
+      .catch((err) => this.diagnosticService.logError("Linear test failed:", err));
   }
 
   onSendActionsToggle(isEnabled: boolean): void {
@@ -695,7 +686,7 @@ export class ButtplugControlPanelComponent implements OnInit {
 
     if (!isEnabled && devicesCount > 0) {
       this.buttplugService.stopAllDevices().catch((err) => {
-        console.error("Failed to stop all devices:", err);
+        this.diagnosticService.logError("Failed to stop all devices:", err);
       });
     }
   }
@@ -735,7 +726,7 @@ export class ButtplugControlPanelComponent implements OnInit {
 
     if (!prefs.enabled) {
       this.buttplugService.stopDevice(device.index).catch((err) => {
-        console.error(`Failed to stop device ${device.name}:`, err);
+        this.diagnosticService.logError(`Failed to stop device ${device.name}:`, err);
       });
     }
   }

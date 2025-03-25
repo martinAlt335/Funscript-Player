@@ -10,14 +10,14 @@ import { AngularRoastModule } from 'ngx-roast-me';
 @Component({
   selector: 'app-root',
   standalone: true,
-    imports: [
-        RouterOutlet,
-        NzCardComponent,
-        ButtplugControlPanelComponent,
-        UploadContainerComponent,
-        PlaybackContainerComponent,
-        AngularRoastModule,
-    ],
+  imports: [
+    RouterOutlet,
+    NzCardComponent,
+    ButtplugControlPanelComponent,
+    UploadContainerComponent,
+    PlaybackContainerComponent,
+    AngularRoastModule,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

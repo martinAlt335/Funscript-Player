@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import Hls from 'hls.js';
+import { DiagnosticService } from "ngx-roast-me";
 
 export enum MimeTypes {
   HLS = 'application/vnd.apple.mpegurl',
@@ -44,6 +45,8 @@ export class VideoPlayerComponent
 
   private lastEmitTime = 0;
   private emissionIntervalMs = 20;
+
+  constructor(private diagnosticService: DiagnosticService) {}
 
   ngOnInit(): void {
     this.initializePlayer();
@@ -139,11 +142,11 @@ export class VideoPlayerComponent
       if (data.fatal) {
         switch (data.type) {
           case Hls.ErrorTypes.NETWORK_ERROR:
-            console.error('Fatal network error encountered, try to recover');
+            this.diagnosticService.logError('Fatal network error encountered, try to recover');
             this.hls?.startLoad();
             break;
           case Hls.ErrorTypes.MEDIA_ERROR:
-            console.error('Fatal media error encountered, try to recover');
+            this.diagnosticService.logError('Fatal media error encountered, try to recover');
             this.hls?.recoverMediaError();
             break;
           default:
