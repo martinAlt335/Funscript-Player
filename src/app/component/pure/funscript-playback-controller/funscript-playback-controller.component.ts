@@ -29,27 +29,28 @@ import { FormsModule } from '@angular/forms';
   template: `
     <div class="playback-controller">
       <button
-        nz-button
-        (click)="togglePlayPause()"
-        [nzType]="isPlaying ? 'default' : 'primary'"
-        aria-label="Play/Pause Button"
+          nz-button
+          (click)="togglePlayPause()"
+          [nzType]="isPlaying ? 'default' : 'primary'"
+          aria-label="Play/Pause Button"
       >
         <i nz-icon [nzType]="isPlaying ? 'pause' : 'caret-right'"></i>
       </button>
 
-      <!-- Slider now works in seconds with smoother updates -->
       <nz-slider
-        class="w-10/12"
-        [nzMin]="0"
-        [(ngModel)]="currentTimeSeconds"
-        [nzMax]="maxTimeSeconds"
-        [nzStep]="0.1"
-        [nzTooltipVisible]="'never'"
-        (ngModelChange)="onSeek($event)"
-        aria-label="Playback Slider"
+          class="w-8/12 md:w-10/12"
+          [nzMin]="0"
+          [(ngModel)]="currentTimeSeconds"
+          [nzMax]="maxTimeSeconds"
+          [nzStep]="0.1"
+          [nzTooltipVisible]="'never'"
+          (ngModelChange)="onSeek($event)"
+          aria-label="Playback Slider"
       ></nz-slider>
 
-      <span> {{ formatTime(currentTimeMs) }} / {{ formatTime(maxTime) }} </span>
+      <span class="time-display min-w-[80px] text-right text-xs md:text-sm">
+    {{ formatTime(currentTimeMs) }} / {{ formatTime(maxTime) }}
+  </span>
     </div>
   `,
   styles: [

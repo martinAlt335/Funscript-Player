@@ -23,14 +23,15 @@
   </div>
 
   <!-- URL Input -->
-  <div class="flex items-center gap-2">
+    <div class="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full">
     <input
-      nz-input
-      placeholder="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-      [(ngModel)]="sourceUrl"
+        nz-input
+        placeholder="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+        [(ngModel)]="sourceUrl"
+        class="flex-grow"
     />
-    <button nz-button nzType="primary" (click)="onUrlSubmit()">Load URL</button>
-  </div>
+        <button nz-button nzType="primary" (click)="onUrlSubmit()" class="w-full md:w-auto">Load URL</button>
+    </div>
 
   <!-- Loaded Video Notification -->
   <div class="flex items-center mt-2 overflow-x-auto" *ngIf="mediaFileName">

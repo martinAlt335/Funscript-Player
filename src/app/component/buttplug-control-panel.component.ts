@@ -184,6 +184,7 @@ import { DiagnosticService } from "ngx-roast-me";
         <!-- TAB 1: Timing Offset -->
         <nz-tab nzTitle="Sync Adjustment">
           <ng-template nz-tab>
+            <div class="tab-content min-h-[540px] md:min-h-[280px]">
             <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
               <div>
                 <h4 class="mb-2">Sync Adjustment (ms)</h4>
@@ -220,24 +221,25 @@ import { DiagnosticService } from "ngx-roast-me";
                 <span class="ml-2 text-sm text-gray-400">(ms)</span>
               </div>
             </div>
+              <p class="text-xs text-gray-400 mt-2">
+                Example: Enter <strong>-1000</strong> ms to trigger actions 1
+                second earlier.
+              </p>
 
-            <p class="text-xs text-gray-400 mt-2">
-              Example: Enter <strong>-1000</strong> ms to trigger actions 1
-              second earlier.
-            </p>
-
-            <nz-alert
-              nzType="info"
-              nzMessage="If your device’s actions line up too soon or too late, adjust this offset to compensate."
-              nzShowIcon
-              class="mt-3"
-            ></nz-alert>
+              <nz-alert
+                  nzType="info"
+                  nzMessage="If your device’s actions line up too soon or too late, adjust this offset to compensate."
+                  nzShowIcon
+                  class="mt-3"
+              ></nz-alert>
+            </div>
           </ng-template>
         </nz-tab>
 
         <!-- TAB 2: Device Response Delay -->
         <nz-tab nzTitle="Device Response">
           <ng-template nz-tab>
+            <div class="tab-content min-h-[540px] md:min-h-[280px]">
             <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
               <div>
                 <h4 class="mb-2">Device Response (ms)</h4>
@@ -288,12 +290,14 @@ import { DiagnosticService } from "ngx-roast-me";
               nzShowIcon
               class="mt-3"
             ></nz-alert>
+            </div>
           </ng-template>
         </nz-tab>
 
         <!-- TAB 3: Stroke Range -->
         <nz-tab nzTitle="Stroke Range">
           <ng-template nz-tab>
+            <div class="tab-content min-h-[540px] md:min-h-[280px]">
             <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
               <div>
                 <h4 class="mb-2">Stroke Range (%)</h4>
@@ -316,6 +320,7 @@ import { DiagnosticService } from "ngx-roast-me";
                   >{{ strokeRange }}%</span
                 >
               </div>
+            </div>
             </div>
           </ng-template>
         </nz-tab>
@@ -353,41 +358,39 @@ import { DiagnosticService } from "ngx-roast-me";
     </nz-card>
 
     <!-- EMERGENCY STOP -->
-    <div class="emergency-section">
-      <div
-        class="emergency-stop-section cursor-pointer"
+    <div
+        class="emergency-stop-section cursor-pointer flex flex-col md:flex-row items-start md:items-center"
         [class.green-mode]="sendActionsEnabled"
         [class.red-mode]="!sendActionsEnabled"
         (click)="onSendActionsToggle(!sendActionsEnabled)"
         aria-label="Emergency Stop Section"
-      >
-        <label class="emergency-label">
-          <span *ngIf="sendActionsEnabled" class="text-green-500 font-bold">
-            Devices Enabled
-          </span>
-          <span *ngIf="!sendActionsEnabled" class="text-red-500 font-bold">
-            Devices Disabled
-          </span>
-          <nz-switch
+    >
+      <label class="emergency-label mb-2 md:mb-0">
+    <span *ngIf="sendActionsEnabled" class="text-green-500 font-bold">
+      Devices Enabled
+    </span>
+        <span *ngIf="!sendActionsEnabled" class="text-red-500 font-bold">
+      Devices Disabled
+    </span>
+        <nz-switch
             [ngModel]="sendActionsEnabled"
             nzDisabled
-            class="emergency-switch"
+            class="emergency-switch ml-2"
             aria-label="Toggle Devices Enabled"
-          ></nz-switch>
-        </label>
-        <div class="emergency-info">
-          <p class="info-text">
-            <span *ngIf="sendActionsEnabled">
-              Click to
-              <span class="font-bold text-red-500">stop all devices</span>
-              immediately.
-            </span>
-            <span *ngIf="!sendActionsEnabled">
-              <span class="font-bold">All devices</span> stopped. Click to
-              <span class="font-bold">re-enable</span>.
-            </span>
-          </p>
-        </div>
+        ></nz-switch>
+      </label>
+      <div class="emergency-info md:ml-4">
+        <p class="info-text text-xs md:text-sm">
+      <span *ngIf="sendActionsEnabled">
+        Click to
+        <span class="font-bold text-red-500">stop all devices</span>
+        immediately.
+      </span>
+          <span *ngIf="!sendActionsEnabled">
+        <span class="font-bold">All devices</span> stopped. Click to
+        <span class="font-bold">re-enable</span>.
+      </span>
+        </p>
       </div>
     </div>
 
