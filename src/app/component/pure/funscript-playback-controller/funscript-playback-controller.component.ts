@@ -27,18 +27,24 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
   ],
   template: `
-    <div class="playback-controller">
-      <button
-          nz-button
-          (click)="togglePlayPause()"
-          [nzType]="isPlaying ? 'default' : 'primary'"
-          aria-label="Play/Pause Button"
-      >
-        <i nz-icon [nzType]="isPlaying ? 'pause' : 'caret-right'"></i>
-      </button>
+    <div class="playback-controller w-full h-full flex flex-col">
+      <div class="flex justify-between items-center w-full mb-2">
+        <button
+            nz-button
+            (click)="togglePlayPause()"
+            [nzType]="isPlaying ? 'default' : 'primary'"
+            aria-label="Play/Pause Button"
+        >
+          <i nz-icon [nzType]="isPlaying ? 'pause' : 'caret-right'"></i>
+        </button>
+
+        <span class="time-display text-xs md:text-sm">
+      {{ formatTime(currentTimeMs) }} / {{ formatTime(maxTime) }}
+    </span>
+      </div>
 
       <nz-slider
-          class="w-8/12 md:w-10/12"
+          class="w-full enhanced-slider"
           [nzMin]="0"
           [(ngModel)]="currentTimeSeconds"
           [nzMax]="maxTimeSeconds"
@@ -47,29 +53,51 @@ import { FormsModule } from '@angular/forms';
           (ngModelChange)="onSeek($event)"
           aria-label="Playback Slider"
       ></nz-slider>
-
-      <span class="time-display min-w-[80px] text-right text-xs md:text-sm">
-    {{ formatTime(currentTimeMs) }} / {{ formatTime(maxTime) }}
-  </span>
     </div>
   `,
   styles: [
     `
       .playback-controller {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+        width: 100%;
       }
-      .playback-controller button {
+
+      .play-button {
         width: 40px;
         height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
-      .playback-controller span {
-        width: 80px;
-        text-align: right;
+
+      .time-display {
+        font-weight: 500;
+        color: #d9d9d9;
+      }
+
+      /* Slider styling */
+      ::ng-deep .enhanced-slider {
+        .ant-slider-rail {
+          background-color: rgba(255, 255, 255, 0.15) !important;
+          height: 6px !important;
+        }
+
+        .ant-slider-track {
+          background-color: #1890ff !important;
+          height: 6px !important;
+        }
+
+        .ant-slider-handle {
+          width: 16px !important;
+          height: 16px !important;
+          border: 2px solid #1890ff !important;
+          background-color: white !important;
+          margin-top: -5px !important;
+          box-shadow: 0 0 5px rgba(24, 144, 255, 0.6) !important;
+        }
+
+        .ant-slider-handle:focus {
+          box-shadow: 0 0 8px rgba(24, 144, 255, 0.8) !important;
+        }
       }
     `,
   ],

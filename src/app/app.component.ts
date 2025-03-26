@@ -6,6 +6,7 @@ import { ButtplugControlPanelComponent } from './component/buttplug-control-pane
 import { UploadContainerComponent } from './component/container/upload-container/upload-container.component';
 import { PlaybackContainerComponent } from './component/container/playback-container/playback-container.component';
 import { AngularRoastModule } from 'ngx-roast-me';
+import { NzModalService } from "ng-zorro-antd/modal";
 
 @Component({
   selector: 'app-root',
@@ -18,11 +19,18 @@ import { AngularRoastModule } from 'ngx-roast-me';
     PlaybackContainerComponent,
     AngularRoastModule,
   ],
+  providers: [NzModalService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  title = 'funscript-player';
+  displayMode: 'standard' | 'minimal' = 'standard';
+
+  constructor() {
+    if (window.innerWidth < 768) {
+      this.displayMode = 'minimal';
+    }
+  }
 
   ngOnInit(): void {
     this.startUsage();

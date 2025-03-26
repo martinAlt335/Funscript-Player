@@ -18,29 +18,28 @@
   </div>
 </div>
 
-
-<div
-        class="fixed bottom-0 left-0 right-0 w-full flex gap-x-4 px-4 pt-2 border-t border-zinc-700 bg-zinc-900 bg-opacity-90 backdrop-blur-sm"
->
+<div class="w-full flex gap-x-4 px-4 pt-2 border-t border-zinc-700 bg-zinc-900 mt-8">
     <a
-            href="https://discuss.eroscripts.com/t/web-funscript-player-enjoy-funscript-videos-on-ios-android-web/35346"
-            rel="noreferrer"
-            target="_blank"
-            class="text-blue-400 hover:text-blue-300 transition-colors"
+    href="https://discuss.eroscripts.com/t/web-funscript-player-enjoy-funscript-videos-on-ios-android-web/35346"
+    rel="noreferrer"
+    target="_blank"
+    class="text-blue-400 hover:text-blue-300 transition-colors"
     >
-        <p class="text-sm md:text-base">Discussion Forum</p>
+    <p class="text-sm md:text-base">Discussion Forum</p>
     </a>
     <a
-            href="https://github.com/martinAlt335/funscript-player"
-            rel="noreferrer"
-            target="_blank"
-            class="text-blue-400 hover:text-blue-300 transition-colors"
+    href="https://github.com/martinAlt335/funscript-player"
+    rel="noreferrer"
+    target="_blank"
+    class="text-blue-400 hover:text-blue-300 transition-colors"
     >
-        <p class="text-sm md:text-base">Github</p>
+    <p class="text-sm md:text-base">Github</p>
     </a>
 </div>
 
 <ngx-angular-roast
+        [tutorialEnabled]="true"
         mode="remote"
+        [displayMode]="displayMode"
         reportingUrl="https://roast-report.vercel.app/api/handler">
 </ngx-angular-roast>

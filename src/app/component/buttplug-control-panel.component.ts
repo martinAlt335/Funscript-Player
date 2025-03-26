@@ -22,6 +22,8 @@ import { NzAlertComponent } from "ng-zorro-antd/alert";
 import { NzSliderModule } from "ng-zorro-antd/slider";
 import { NzTabComponent, NzTabDirective, NzTabSetComponent, } from "ng-zorro-antd/tabs";
 import { DiagnosticService } from "ngx-roast-me";
+import { NzModalComponent, NzModalContentDirective } from "ng-zorro-antd/modal";
+import { SettingsPanelComponent } from "./settings-panel/settings-panel.component";
 
 @Component({
   selector: "app-buttplug-control-panel",
@@ -50,6 +52,9 @@ import { DiagnosticService } from "ngx-roast-me";
     NzTabComponent,
     NzTabDirective,
     NzTabSetComponent,
+    SettingsPanelComponent,
+    NzModalComponent,
+    NzModalContentDirective,
   ],
   template: `
     @let sendActionsEnabled = configRepo.sendActionsEnabled$ | async; @let
@@ -178,154 +183,46 @@ import { DiagnosticService } from "ngx-roast-me";
     </nz-card>
 
     <!-- ADVANCED SETTINGS IN TABS -->
-    <nz-card class="my-4 advanced-settings-card">
-      <h3 class="mb-2">Settings</h3>
-      <nz-tabset [nzAnimated]="false">
-        <!-- TAB 1: Timing Offset -->
-        <nz-tab nzTitle="Sync Adjustment">
-          <ng-template nz-tab>
-            <div class="tab-content min-h-[540px] md:min-h-[280px]">
-            <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
-              <div>
-                <h4 class="mb-2">Sync Adjustment (ms)</h4>
-                <p class="text-sm text-gray-300">
-                  This shifts <strong>when</strong> the actions from your script
-                  are triggered.<br />
-                  - A
-                  <strong class="text-pink-500">negative</strong> value fires
-                  commands <em>earlier</em> than normal.<br />
-                  - A
-                  <strong class="text-orange-500">positive</strong> value fires
-                  commands <em>later</em> than normal.<br /><br />
-                  <strong class="text-blue-500">Use this setting</strong> if
-                  your device’s movement starts too soon or too late compared to
-                  what you see on the screen. Adjusting this tries to match your
-                  device’s motion timing to the onscreen events.
-                </p>
-              </div>
-              <div class="flex items-center">
-                <nz-input-number
-                  [ngModel]="scriptTimingOffsetMs"
-                  (ngModelChange)="onTimingOffsetChange($event)"
-                  [nzStep]="100"
-                  [nzPrecision]="0"
-                  [nzFormatter]="formatter"
-                  [nzParser]="parser"
-                  style="width: 120px;"
-                  aria-label="Script to Device Offset Input"
-                  [ngClass]="{
-                    'text-pink-500': scriptTimingOffsetMs < 0,
-                    'text-orange-500': scriptTimingOffsetMs > 0
-                  }"
-                ></nz-input-number>
-                <span class="ml-2 text-sm text-gray-400">(ms)</span>
-              </div>
-            </div>
-              <p class="text-xs text-gray-400 mt-2">
-                Example: Enter <strong>-1000</strong> ms to trigger actions 1
-                second earlier.
-              </p>
-
-              <nz-alert
-                  nzType="info"
-                  nzMessage="If your device’s actions line up too soon or too late, adjust this offset to compensate."
-                  nzShowIcon
-                  class="mt-3"
-              ></nz-alert>
-            </div>
-          </ng-template>
-        </nz-tab>
-
-        <!-- TAB 2: Device Response Delay -->
-        <nz-tab nzTitle="Device Response">
-          <ng-template nz-tab>
-            <div class="tab-content min-h-[540px] md:min-h-[280px]">
-            <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
-              <div>
-                <h4 class="mb-2">Device Response (ms)</h4>
-                <p class="text-sm text-gray-300">
-                  This modifies <strong>how long</strong> each movement takes,
-                  effectively compensating for a device's built-in lag or speed
-                  limits.<br /><br />
-                  - A <strong class="text-pink-500">negative</strong> value
-                  shortens each stroke’s duration (makes your device move more
-                  quickly).<br />
-                  - A <strong class="text-orange-500">positive</strong> value
-                  lengthens each stroke’s duration, giving slower devices more
-                  time to finish each movement.<br /><br />
-                  <strong class="text-blue-500">Use this setting</strong> if
-                  your device physically cannot complete movements quickly
-                  enough (or too quickly) to match the script’s timing. You’re
-                  compensating for actual device movement speed.
-                </p>
-              </div>
-
-              <div class="flex items-center">
-                <nz-input-number
-                  [ngModel]="deviceResponseDelay"
-                  (ngModelChange)="onDeviceResponseDelayChange($event)"
-                  [nzStep]="100"
-                  [nzPrecision]="0"
-                  [nzFormatter]="formatter"
-                  [nzParser]="parser"
-                  style="width: 120px;"
-                  aria-label="Device Response Delay Slider"
-                  [ngClass]="{
-                    'text-pink-500': deviceResponseDelay < 0,
-                    'text-orange-500': deviceResponseDelay > 0
-                  }"
-                ></nz-input-number>
-                <span class="ml-2 text-sm text-gray-400">(ms)</span>
-              </div>
-            </div>
-
-            <p class="text-xs text-gray-400 mt-3">
-              Example: Enter <strong>1000</strong> to add 1 second to each
-              stroke’s duration for slower devices.
-            </p>
-
-            <nz-alert
-              nzType="info"
-              nzMessage="Tweak this if your device physically lags behind or rushes through movements."
-              nzShowIcon
-              class="mt-3"
-            ></nz-alert>
-            </div>
-          </ng-template>
-        </nz-tab>
-
-        <!-- TAB 3: Stroke Range -->
-        <nz-tab nzTitle="Stroke Range">
-          <ng-template nz-tab>
-            <div class="tab-content min-h-[540px] md:min-h-[280px]">
-            <div class="md:flex md:gap-x-7 items-center justify-between mt-4">
-              <div>
-                <h4 class="mb-2">Stroke Range (%)</h4>
-                <p class="text-sm text-gray-300">
-                  Adjust the maximum stroke length for linear devices. Default
-                  is 100% for a full range of movement.
-                </p>
-              </div>
-              <div class="flex items-center">
-                <nz-slider
-                  [ngModel]="strokeRange"
-                  (ngModelChange)="onStrokeRangeChange($event)"
-                  [nzMin]="1"
-                  [nzMax]="100"
-                  nzTooltipVisible="never"
-                  style="width: 150px;"
-                  aria-label="Stroke Range Slider"
-                ></nz-slider>
-                <span class="ml-3 text-sm text-gray-400"
-                  >{{ strokeRange }}%</span
-                >
-              </div>
-            </div>
-            </div>
-          </ng-template>
-        </nz-tab>
-      </nz-tabset>
+    <nz-card class="my-4 advanced-settings-card md:hidden">
+      <button
+          nz-button
+          nzType="primary"
+          (click)="openSettingsModal()"
+          class="w-full"
+      >
+        <div class="">
+          <span class="mr-2" nz-icon nzType="setting"></span>
+          <span>Settings</span>
+        </div>
+      </button>
     </nz-card>
+
+    <!-- Desktop Card -->
+    <nz-card class="my-4 advanced-settings-card hidden md:block">
+      <h3 class="mb-2">Settings</h3>
+      <app-settings-panel
+          [scriptTimingOffsetMs]="(configRepo.scriptTimingOffsetMs$ | async)!"
+          [deviceResponseDelay]="(configRepo.deviceResponseDelayMs$ | async)!"
+          [strokeRange]="(configRepo.strokeRange$ | async)!"
+      ></app-settings-panel>
+    </nz-card>
+
+    <!-- Settings Modal for Mobile -->
+    <nz-modal
+        [(nzVisible)]="isSettingsModalVisible"
+        nzTitle="Settings"
+        (nzOnCancel)="closeSettingsModal()"
+        [nzFooter]="null"
+        [nzWidth]="'90%'"
+    >
+      <ng-container *nzModalContent>
+      <app-settings-panel
+          [scriptTimingOffsetMs]="(configRepo.scriptTimingOffsetMs$ | async)!"
+          [deviceResponseDelay]="(configRepo.deviceResponseDelayMs$ | async)!"
+          [strokeRange]="(configRepo.strokeRange$ | async)!"
+      ></app-settings-panel>
+      </ng-container>
+    </nz-modal>
 
     <!-- SCANNING CONTROLS -->
     <nz-card class="scanning-card">
@@ -514,6 +411,7 @@ export class ButtplugControlPanelComponent implements OnInit {
   isScanning = false;
   devices: ButtplugDeviceInfo[] = [];
   connectedUrl: string | undefined;
+  isSettingsModalVisible = false;
 
   devicePrefs: Record<
     number,
@@ -610,6 +508,14 @@ export class ButtplugControlPanelComponent implements OnInit {
       default:
         return "disconnected";
     }
+  }
+
+  openSettingsModal(): void {
+    this.isSettingsModalVisible = true;
+  }
+
+  closeSettingsModal(): void {
+    this.isSettingsModalVisible = false;
   }
 
   connect(): void {

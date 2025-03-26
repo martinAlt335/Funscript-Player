@@ -1,41 +1,54 @@
 <div class="playback-section">
-  <ng-container *ngIf="videoUrl; else noVideo">
-    <div class="md:max-w-2xl mx-auto">
-      <app-video-player
-        [sourceUrl]="videoUrl"
-        [mimeType]="$any(mimeType)"
-        (currentTimeMs)="handlePlaybackTimeUpdate($event)"
-        (paused)="handlePlaybackPause()"
-      ></app-video-player>
+    <div class="md:max-w-4xl mx-auto">
+    <ng-container *ngIf="videoUrl; else noVideo">
+        <div class="video-container w-full mx-auto rounded-lg overflow-hidden shadow-lg">
+            <app-video-player
+                    [sourceUrl]="videoUrl"
+                    [mimeType]="$any(mimeType)"
+                    (currentTimeMs)="handlePlaybackTimeUpdate($event)"
+                    (paused)="handlePlaybackPause()"
+            ></app-video-player>
+        </div>
+    </ng-container>
+    <ng-template #noVideo>
+        <div class="controller-container w-full mx-auto p-3 bg-zinc-800 rounded-lg shadow-md border border-zinc-700">
+            <app-funscript-playback-controller
+                    [maxTime]="funscriptDuration"
+                    (currentTimeMsOutput)="handlePlaybackTimeUpdate($event)"
+                    (pause)="handlePlaybackPause()"
+            ></app-funscript-playback-controller>
+        </div>
+    </ng-template>
+
+    <!-- Heatmap -->
+    <div class="w-full mx-auto mt-5" *ngIf="funscript">
+        <div class="heatmap-container p-2 bg-zinc-800 rounded-lg border border-zinc-700 shadow-md">
+            <h4 class="text-sm text-gray-300 mb-1 px-1">Intensity Map</h4>
+            <app-funscript-heatmap
+                    class="w-full"
+                    [heightPx]="80"
+                    [funscript]="funscript"
+            ></app-funscript-heatmap>
+        </div>
     </div>
-  </ng-container>
-  <ng-template #noVideo>
-    <app-funscript-playback-controller
-      [maxTime]="funscriptDuration"
-      (currentTimeMsOutput)="handlePlaybackTimeUpdate($event)"
-      (pause)="handlePlaybackPause()"
-    ></app-funscript-playback-controller>
-  </ng-template>
 
-  <div class="md:max-w-2xl mx-auto" *ngIf="funscript">
-    <app-funscript-heatmap
-      class="w-full"
-      [heightPx]="80"
-      [funscript]="funscript"
-    ></app-funscript-heatmap>
-  </div>
-
-    <div class="md:max-w-2xl mx-auto flex items-center justify-between mt-2" *ngIf="funscript">
-        <div class="flex items-center">
-            <span class="mr-2">Invert Script:</span>
-            <nz-switch
-                [(ngModel)]="funscriptService.invertFunscriptActions"
-                nzCheckedChildren="On"
-                nzUnCheckedChildren="Off">
-            </nz-switch>
+    <!-- Invert Script Control -->
+    <div class="w-full mx-auto mt-4" *ngIf="funscript">
+        <div class="control-container p-3 bg-zinc-800 rounded-lg border border-zinc-700 shadow-md">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between">
+                <div class="flex items-center mb-2 sm:mb-0">
+                    <span class="mr-2 font-medium">Invert Script</span>
+                    <nz-switch
+                            [(ngModel)]="funscriptService.invertFunscriptActions"
+                            nzCheckedChildren="On"
+                            nzUnCheckedChildren="Off">
+                    </nz-switch>
+                </div>
+                <div class="text-sm text-gray-400">
+                    Toggle if the script plays upside down
+                </div>
+            </div>
         </div>
-        <div class="text-sm text-gray-400">
-            Toggle if the script plays upside down
-        </div>
+    </div>
     </div>
 </div>

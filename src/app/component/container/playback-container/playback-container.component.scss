@@ -1,3 +1,42 @@
 .playback-section {
-  padding: 1rem;
+  padding: 0.75rem;
+
+  @media (min-width: 768px) {
+    padding: 1rem;
+  }
+
+  .video-container {
+    border: 1px solid #3f3f46;
+    min-height: 150px;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+  }
+
+  .controller-container {
+    min-height: 60px;
+    width: 100%;
+  }
+
+  .heatmap-container {
+    transition: all 0.2s ease;
+    width: 100%;
+
+    &:hover {
+      border-color: #52525b;
+    }
+
+    canvas {
+      border-radius: 0.25rem;
+      width: 100%;
+    }
+  }
+
+  .control-container {
+    transition: all 0.2s ease;
+    width: 100%;
+
+    &:hover {
+      border-color: #52525b;
+    }
+  }
 }
