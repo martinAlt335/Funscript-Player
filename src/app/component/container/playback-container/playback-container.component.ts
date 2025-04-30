@@ -28,7 +28,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class PlaybackContainerComponent implements OnInit, OnDestroy {
   funscriptDuration: number = 0;
-  funscript: Funscript | undefined;
+  modifiableFunscript: Funscript | undefined; // Only changes on user upload
   videoUrl: string | undefined;
   mimeType: string = 'video/mp4';
 
@@ -43,14 +43,17 @@ export class PlaybackContainerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.funscriptService.funscriptDuration$.subscribe((duration) => {
+      this.funscriptService.duration$.subscribe((duration) => {
         this.funscriptDuration = duration;
       })
     );
 
     this.subscriptions.add(
-      this.funscriptService.currentFunscript$.subscribe((fs) => {
-        this.funscript = fs;
+      this.funscriptService.funscript$.subscribe(({ funscript, source }) => {
+        // We only want 'upload' events to affect the rendered heatmap. 'edit' events won't affect, otherwise we will spiral into a change loop.
+        if (source === 'upload') {
+          this.modifiableFunscript = funscript;
+        }
       })
     );
 
@@ -64,6 +67,12 @@ export class PlaybackContainerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  handleUserModifiedFunscript(funscript: Funscript) {
+    // Load the edited funscript file and set source as 'edit' so we don't spiral into an update-loop from our above subscription.
+    // In our subscription above, we only change modify the locally stored file if it was an 'upload' event.
+    this.funscriptService.loadFunscript(funscript, 'edit');
   }
 
   handlePlaybackTimeUpdate(timeMs: number): void {

@@ -21,23 +21,23 @@
     </ng-template>
 
     <!-- Heatmap -->
-    <div class="w-full mx-auto mt-5" *ngIf="funscript">
+    <div class="w-full mx-auto mt-5" *ngIf="modifiableFunscript">
         <div class="heatmap-container p-2 bg-zinc-800 rounded-lg border border-zinc-700 shadow-md">
             <h4 class="text-sm text-gray-300 mb-1 px-1">Intensity Map</h4>
             <app-funscript-heatmap
                     class="w-full"
-                    [heightPx]="80"
-                    [funscript]="funscript"
+                    [funscript]="modifiableFunscript"
+                    (modifiedFunscript)="handleUserModifiedFunscript($event)"
             ></app-funscript-heatmap>
         </div>
     </div>
 
     <!-- Invert Script Control -->
-    <div class="w-full mx-auto mt-4" *ngIf="funscript">
+    <div class="w-full mx-auto mt-4" *ngIf="(funscriptService.funscript$ | async)?.funscript">
         <div class="control-container p-3 bg-zinc-800 rounded-lg border border-zinc-700 shadow-md">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between">
                 <div class="flex items-center mb-2 sm:mb-0">
-                    <span class="mr-2 font-medium">Invert Script</span>
+                    <span class="mr-2 font-medium">Invert Script Playback</span>
                     <nz-switch
                             [(ngModel)]="funscriptService.invertFunscriptActions"
                             nzCheckedChildren="On"

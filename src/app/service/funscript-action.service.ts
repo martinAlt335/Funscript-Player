@@ -6,6 +6,7 @@ import { ButtplugService } from "./buttplug.service";
 import { DevicePreferencesService } from "./device-preferences.service";
 import { ConfigRepository } from "../state/config/config.repository";
 import { DiagnosticService } from "ngx-roast-me";
+import { FunscriptChangedEvent } from "../interface/funscript-changed-event.interface";
 
 @Injectable({
   providedIn: "root",
@@ -16,14 +17,15 @@ export class FunscriptActionService {
   private actions: Action[] = [];
   private lastActionIndex = -1;
 
-  private funscriptDurationSubject = new BehaviorSubject<number>(0);
-  public funscriptDuration$: Observable<number> =
-    this.funscriptDurationSubject.asObservable();
+  // Subjects & Observables
+  private funscriptSubject = new BehaviorSubject<FunscriptChangedEvent>({
+    funscript: undefined,
+    source: 'upload'
+  });
+  private durationSubject = new BehaviorSubject<number>(0);
 
-  private currentFunscriptSubject = new BehaviorSubject<Funscript | undefined>(
-    undefined
-  );
-  public currentFunscript$ = this.currentFunscriptSubject.asObservable();
+  public funscript$ = this.funscriptSubject.asObservable();
+  public duration$: Observable<number> = this.durationSubject.asObservable();
 
   constructor(
     private configRepo: ConfigRepository,
@@ -32,20 +34,20 @@ export class FunscriptActionService {
     private diagnosticService: DiagnosticService,
   ) {}
 
-  loadFunscript(funscript: Funscript): void {
+  loadFunscript(funscript: Funscript, source: 'upload' | 'edit' = 'upload'): void {
     if (funscript && funscript.actions && funscript.actions.length > 0) {
       this.actions = [...funscript.actions].sort((a, b) => a.at - b.at);
       this.lastActionIndex = -1;
       const duration = funscript.actions[funscript.actions.length - 1].at;
-      this.funscriptDurationSubject.next(duration);
-      this.currentFunscriptSubject.next(funscript);
+      this.durationSubject.next(duration);
+      this.funscriptSubject.next({ funscript, source });
     }
   }
 
   removeFunscript() {
     this.actions = [];
-    this.funscriptDurationSubject.next(0);
-    this.currentFunscriptSubject.next(undefined);
+    this.durationSubject.next(0);
+    this.funscriptSubject.next({ funscript: undefined, source: 'upload'});
   }
 
   checkTime(currentTimeMs: number): void {
