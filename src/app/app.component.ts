@@ -7,6 +7,7 @@ import { UploadContainerComponent } from './component/container/upload-container
 import { PlaybackContainerComponent } from './component/container/playback-container/playback-container.component';
 import { AngularRoastModule } from 'ngx-roast-me';
 import { NzModalService } from "ng-zorro-antd/modal";
+import { HotkeysService } from './service/hotkeys.service';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,10 @@ import { NzModalService } from "ng-zorro-antd/modal";
 export class AppComponent implements OnInit {
   displayMode: 'standard' | 'minimal' = 'standard';
 
-  constructor() {
+  constructor(
+      private hotkeyService: HotkeysService,
+      private modalService: NzModalService
+  ) {
     if (window.innerWidth < 768) {
       this.displayMode = 'minimal';
     }
@@ -34,6 +38,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.startUsage();
+    this.hotkeyService.registerDeviceToggleHotkeyAndChangeListener();
+    this.hotkeyService.registerHelpModal(this.modalService);
   }
 
   startUsage(): void {

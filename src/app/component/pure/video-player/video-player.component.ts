@@ -74,6 +74,20 @@ export class VideoPlayerComponent
     }
   }
 
+  /**
+   * Toggles video playback between play and pause states
+   */
+  togglePlayPause(): void {
+    const video = this.videoRef.nativeElement;
+    if (video.paused) {
+      video.play().catch(err => {
+        this.diagnosticService.logError('Error playing video:', err);
+      });
+    } else {
+      video.pause();
+    }
+  }
+
   private onPlay = () => {
     this.isPlaying = true;
     this.startRafLoop();

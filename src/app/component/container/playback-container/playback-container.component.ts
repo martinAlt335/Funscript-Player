@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FunscriptActionService } from '../../../service/funscript-action.service';
 import { PlaybackStateService } from '../../../service/playback-state.service';
@@ -11,6 +11,7 @@ import { ConfigRepository } from '../../../state/config/config.repository';
 import { Funscript } from 'funscript-utils/lib/types';
 import { NzSwitchComponent } from 'ng-zorro-antd/switch';
 import { FormsModule } from '@angular/forms';
+import { HotkeysDirective, HotkeysService as NgHotkeysService, HotkeysShortcutPipe } from '@ngneat/hotkeys';
 
 @Component({
   selector: 'app-playback-container',
@@ -22,11 +23,16 @@ import { FormsModule } from '@angular/forms';
     VideoPlayerComponent,
     NzSwitchComponent,
     FormsModule,
+    HotkeysDirective,
+    HotkeysShortcutPipe,
   ],
   templateUrl: './playback-container.component.html',
   styleUrls: ['./playback-container.component.scss'],
 })
 export class PlaybackContainerComponent implements OnInit, OnDestroy {
+  @ViewChild(FunscriptPlaybackControllerComponent) playbackController?: FunscriptPlaybackControllerComponent;
+  @ViewChild(VideoPlayerComponent) videoPlayer?: VideoPlayerComponent;
+
   funscriptDuration: number = 0;
   modifiableFunscript: Funscript | undefined; // Only changes on user upload
   videoUrl: string | undefined;
@@ -35,10 +41,11 @@ export class PlaybackContainerComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
+    public configRepo: ConfigRepository,
     public funscriptService: FunscriptActionService,
-    private playbackState: PlaybackStateService,
     private buttplugService: ButtplugService,
-    private configRepo: ConfigRepository
+    private hotkeysService: NgHotkeysService,
+    private playbackState: PlaybackStateService
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +57,6 @@ export class PlaybackContainerComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(
       this.funscriptService.funscript$.subscribe(({ funscript, source }) => {
-        // We only want 'upload' events to affect the rendered heatmap. 'edit' events won't affect, otherwise we will spiral into a change loop.
         if (source === 'upload') {
           this.modifiableFunscript = funscript;
         }
@@ -63,13 +69,50 @@ export class PlaybackContainerComponent implements OnInit, OnDestroy {
         this.mimeType = this.getMimeTypeFromUrl(url);
       })
     );
+
+    this.registerPlaybackHotkey(); // Register playback toggle hotkey
+
+    this.subscriptions.add(
+        this.configRepo.hotkeys$.subscribe(() => {
+          this.registerPlaybackHotkey(); // Re-register hotkey when config changes
+        })
+    );
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    // Remove the hotkey onDestroy
+    const key = this.configRepo.hotkeys.togglePlayback;
+    this.hotkeysService.removeShortcuts([key]);
   }
 
-  handleUserModifiedFunscript(funscript: Funscript) {
+  private registerPlaybackHotkey(): void {
+    const key = this.configRepo.hotkeys.togglePlayback;
+
+    // Remove existing shortcut
+    this.hotkeysService.removeShortcuts([key]);
+
+    this.hotkeysService.addShortcut({
+      keys: key,
+      description: 'Toggle playback (play/pause)',
+      group: 'Playback',
+      allowIn: [] // keep empty so as we don't want to allow in input fields
+    }).subscribe(() => {
+      this.togglePlayback();
+    });
+  }
+
+  togglePlayback(): void {
+    if (this.videoUrl && this.videoPlayer) {
+      // If we have video player, toggle its play/pause state
+      this.videoPlayer.togglePlayPause();
+    } else if (this.playbackController) {
+      // Otherwise toggle playback controller
+      this.playbackController.togglePlayPause();
+    }
+  }
+
+  handleUserModifiedFunscript(funscript: Funscript): void {
     // Load the edited funscript file and set source as 'edit' so we don't spiral into an update-loop from our above subscription.
     // In our subscription above, we only change modify the locally stored file if it was an 'upload' event.
     this.funscriptService.loadFunscript(funscript, 'edit');

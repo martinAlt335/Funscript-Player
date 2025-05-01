@@ -8,6 +8,11 @@ export enum ConnectionType {
   Local = "local",
 }
 
+export interface HotkeyConfig {
+  togglePlayback: string;
+  toggleDevices: string;
+}
+
 export interface ConfigState {
   deviceResponseDelayMs: number;
   externalUrl: string;
@@ -15,6 +20,7 @@ export interface ConfigState {
   selectedConnectionType: ConnectionType;
   sendActionsEnabled: boolean;
   strokeRange: number;
+  hotkeys: HotkeyConfig;
 }
 
 @Injectable({ providedIn: "root" })
@@ -27,6 +33,7 @@ export class ConfigRepository {
   selectedConnectionType$!: Observable<"external" | "local">;
   sendActionsEnabled$!: Observable<boolean>;
   strokeRange$!: Observable<number>;
+  hotkeys$!: Observable<HotkeyConfig>;
 
   constructor() {
     this.store = this.createStore();
@@ -46,6 +53,7 @@ export class ConfigRepository {
       select((state) => state.sendActionsEnabled)
     );
     this.strokeRange$ = this.store.pipe(select((state) => state.strokeRange));
+    this.hotkeys$ = this.store.pipe(select((state) => state.hotkeys));
   }
 
   get externalUrl() {
@@ -60,6 +68,10 @@ export class ConfigRepository {
     return this.store.query((state) => state.sendActionsEnabled);
   }
 
+  get hotkeys() {
+    return this.store.query((state) => state.hotkeys);
+  }
+
   createStore() {
     return createStore(
       { name: "config" },
@@ -70,6 +82,10 @@ export class ConfigRepository {
         scriptTimingOffsetMs: -200,
         strokeRange: 100,
         deviceResponseDelayMs: 0,
+        hotkeys: {
+          togglePlayback: "space",
+          toggleDevices: "shift.d"
+        }
       })
     );
   }
@@ -85,6 +101,16 @@ export class ConfigRepository {
     this.store.update((state) => ({
       ...state,
       ...config,
+    }));
+  }
+
+  updateHotkey(key: keyof HotkeyConfig, value: string): void {
+    this.store.update((state) => ({
+      ...state,
+      hotkeys: {
+        ...state.hotkeys,
+        [key]: value
+      }
     }));
   }
 }

@@ -20,6 +20,13 @@
         </div>
     </ng-template>
 
+    <!-- Hotkey indicator for playback -->
+    <div class="hotkey-indicator mt-2 text-xs text-gray-400 text-right" *ngIf="configRepo.hotkeys$ | async as hotkeys">
+    <span>
+        Press <kbd class="px-1 bg-zinc-700 rounded" [innerHTML]="hotkeys.togglePlayback | hotkeysShortcut"></kbd> to toggle playback
+    </span>
+    </div>
+
     <!-- Heatmap -->
     <div class="w-full mx-auto mt-5" *ngIf="modifiableFunscript">
         <div class="heatmap-container p-2 bg-zinc-800 rounded-lg border border-zinc-700 shadow-md">

@@ -20,6 +20,7 @@
     "@angular/router": "^18.2.0",
     "@ngneat/elf": "^2.5.1",
     "@ngneat/elf-persist-state": "^1.2.1",
+    "@ngneat/hotkeys": "^4.1.0",
     "buttplug": "^3.2.2",
     "buttplug-wasm": "^2.0.1",
     "funscript-utils": "^1.1.3",

@@ -22,8 +22,10 @@ import { NzAlertComponent } from "ng-zorro-antd/alert";
 import { NzSliderModule } from "ng-zorro-antd/slider";
 import { NzTabComponent, NzTabDirective, NzTabSetComponent, } from "ng-zorro-antd/tabs";
 import { DiagnosticService } from "ngx-roast-me";
-import { NzModalComponent, NzModalContentDirective } from "ng-zorro-antd/modal";
+import { NzModalComponent, NzModalContentDirective, NzModalService } from "ng-zorro-antd/modal";
 import { SettingsPanelComponent } from "./settings-panel/settings-panel.component";
+import { CustomHotkeysHelpComponent } from "./container/hotkeys-help-component/custom-hotkeys-help.component";
+import { HotkeyIndicatorComponent } from "./pure/hotkey-indicator.component";
 
 @Component({
   selector: "app-buttplug-control-panel",
@@ -55,17 +57,32 @@ import { SettingsPanelComponent } from "./settings-panel/settings-panel.componen
     SettingsPanelComponent,
     NzModalComponent,
     NzModalContentDirective,
+    HotkeyIndicatorComponent,
   ],
   template: `
     @let sendActionsEnabled = configRepo.sendActionsEnabled$ | async; @let
-    selectedConnectionType = configRepo.selectedConnectionType$ | async; @let
-    scriptTimingOffsetMs = (configRepo.scriptTimingOffsetMs$ | async)!; @let
-    externalUrl = (configRepo.externalUrl$ | async)!; @let strokeRange =
-    (configRepo.strokeRange$ | async)!; @let deviceResponseDelay =
-    (configRepo.deviceResponseDelayMs$ | async)!;
+        selectedConnectionType = configRepo.selectedConnectionType$ | async; @let
+        scriptTimingOffsetMs = (configRepo.scriptTimingOffsetMs$ | async)!; @let
+        externalUrl = (configRepo.externalUrl$ | async)!; @let strokeRange =
+        (configRepo.strokeRange$ | async)!; @let deviceResponseDelay =
+        (configRepo.deviceResponseDelayMs$ | async)!;
 
     <!-- SERVER CONTROL -->
-    <h2 class="text-lg">Server Control</h2>
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg">Server Control</h2>
+
+      <!-- Hotkeys Button -->
+      <button
+          nz-button
+          nzType="default"
+          (click)="showHotkeysModal()"
+          class="flex items-center"
+      >
+        <span nz-icon nzType="control" class="!align-baseline" nzTheme="outline"></span>
+        <span class="ml-1">Keyboard Shortcuts</span>
+      </button>
+    </div>
+
     <nz-card class="connection-card">
       <form>
         <!-- Connection Type Radio Buttons -->
@@ -276,7 +293,7 @@ import { SettingsPanelComponent } from "./settings-panel/settings-panel.componen
             aria-label="Toggle Devices Enabled"
         ></nz-switch>
       </label>
-      <div class="emergency-info md:ml-4">
+      <div class="emergency-info md:ml-4 flex-grow">
         <p class="info-text text-xs md:text-sm">
       <span *ngIf="sendActionsEnabled">
         Click to
@@ -288,6 +305,11 @@ import { SettingsPanelComponent } from "./settings-panel/settings-panel.componen
         <span class="font-bold">re-enable</span>.
       </span>
         </p>
+      </div>
+      <div class="ml-auto mt-2 md:mt-0" *ngIf="configRepo.hotkeys$ | async as hotkeys">
+        <app-hotkey-indicator [hotkey]="hotkeys.toggleDevices">
+          Toggle devices:
+        </app-hotkey-indicator>
       </div>
     </div>
 
@@ -305,7 +327,7 @@ import { SettingsPanelComponent } from "./settings-panel/settings-panel.componen
             <nz-tag [nzColor]="'cyan'" *ngIf="device.canRotate">Rotate</nz-tag>
             <nz-tag [nzColor]="'green'" *ngIf="device.canLinear">Linear</nz-tag>
             <nz-tag [nzColor]="'pink'" *ngIf="device.canVibrate"
-              >Vibrate</nz-tag
+            >Vibrate</nz-tag
             >
           </div>
 
@@ -430,6 +452,7 @@ export class ButtplugControlPanelComponent implements OnInit {
     private buttplugService: ButtplugService,
     private devicePreferencesService: DevicePreferencesService,
     private diagnosticService: DiagnosticService,
+    private modalService: NzModalService
   ) {}
 
   ngOnInit(): void {
@@ -472,6 +495,24 @@ export class ButtplugControlPanelComponent implements OnInit {
 
     // Initial load of global preferences
     this.updateGlobalPreferences();
+  }
+
+  /**
+   * Show the hotkeys help modal dialog
+   */
+  showHotkeysModal(): void {
+    const modalRef = this.modalService.create({
+      nzContent: CustomHotkeysHelpComponent,
+      nzFooter: null,
+      nzWidth: '800px',
+      nzBodyStyle: { padding: '0' },
+    });
+
+    const instance = modalRef.getContentComponent();
+    if (instance) {
+      instance.title = 'Keyboard Shortcuts';
+      instance.dismiss.subscribe(() => modalRef.close());
+    }
   }
 
   get hasWebBluetooth(): boolean {
