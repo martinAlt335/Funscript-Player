@@ -1,39 +1,61 @@
+<app-promo-banner
+        iconUrl="assets/funplayer-app-icon-64px.svg"
+        [cooldownDays]="30"
+></app-promo-banner>
+
 <div class="pb-12">
-  <div class="m-4">
-    <nz-card>
-      <app-buttplug-control-panel></app-buttplug-control-panel>
-    </nz-card>
-  </div>
+    <div class="m-4">
+        <nz-card>
+            <app-buttplug-control-panel></app-buttplug-control-panel>
+        </nz-card>
+    </div>
 
-  <div class="m-4">
-    <nz-card>
-      <app-upload-container></app-upload-container>
-    </nz-card>
-  </div>
+    <div class="m-4">
+        <nz-card>
+            <app-upload-container></app-upload-container>
+        </nz-card>
+    </div>
 
-  <div class="m-4">
-    <nz-card>
-      <app-playback-container></app-playback-container>
-    </nz-card>
-  </div>
+    <div class="m-4">
+        <nz-card>
+            <app-playback-container></app-playback-container>
+        </nz-card>
+    </div>
 </div>
 
-<div class="w-full flex gap-x-4 px-4 pt-2 border-t border-zinc-700 bg-zinc-900 mt-8">
+<div class="w-full flex gap-x-4 px-4 py-3 border-t border-zinc-700 bg-zinc-900 mt-8">
     <a
-    href="https://discuss.eroscripts.com/t/web-funscript-player-enjoy-funscript-videos-on-ios-android-web/35346"
-    rel="noreferrer"
-    target="_blank"
-    class="text-blue-400 hover:text-blue-300 transition-colors"
+            href="https://discuss.eroscripts.com/t/web-funscript-player-enjoy-funscript-videos-on-ios-android-web/35346"
+            rel="noreferrer"
+            target="_blank"
+            class="my-auto text-blue-400 hover:text-blue-300 transition-colors"
     >
-    <p class="text-sm md:text-base">Discussion Forum</p>
+        <span class="text-sm md:text-base">Discussion Forum</span>
     </a>
     <a
-    href="https://github.com/martinAlt335/funscript-player"
-    rel="noreferrer"
-    target="_blank"
-    class="text-blue-400 hover:text-blue-300 transition-colors"
+            href="https://github.com/martinAlt335/funscript-player"
+            rel="noreferrer"
+            target="_blank"
+            class="my-auto text-blue-400 hover:text-blue-300 transition-colors"
     >
-    <p class="text-sm md:text-base">Github</p>
+        <span class="text-sm md:text-base">Github</span>
+    </a>
+
+    <a href="https://funplayer.app/" target="_blank" class="ml-auto inline-flex items-center rounded border border-amber-400/80 bg-zinc-900/85 backdrop-blur shadow-md hover:border-amber-300 transition">
+        <button
+                type="button"
+                class="px-3 py-1 ml-auto inline-flex gap-2 text-xs md:text-sm text-zinc-100"
+                aria-label="Open FunPlayer official site"
+        >
+            <img
+                    [src]="'assets/funplayer-app-icon-64px.svg'"
+                    alt=""
+                    class="h-4 w-4 md:h-5 md:w-5 rounded"
+                    decoding="async"
+            />
+            <span class="font-medium">FunPlayer</span>
+            <span class="hidden sm:inline text-zinc-400">- Our macOS script player</span>
+        </button>
     </a>
 </div>
 

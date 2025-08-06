@@ -8,18 +8,20 @@ import { PlaybackContainerComponent } from './component/container/playback-conta
 import { AngularRoastModule } from 'ngx-roast-me';
 import { NzModalService } from "ng-zorro-antd/modal";
 import { HotkeysService } from './service/hotkeys.service';
+import { PromoBannerComponent } from "./component/pure/promo-banner/promo-banner.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    NzCardComponent,
-    ButtplugControlPanelComponent,
-    UploadContainerComponent,
-    PlaybackContainerComponent,
-    AngularRoastModule,
-  ],
+    imports: [
+        RouterOutlet,
+        NzCardComponent,
+        ButtplugControlPanelComponent,
+        UploadContainerComponent,
+        PlaybackContainerComponent,
+        AngularRoastModule,
+        PromoBannerComponent,
+    ],
   providers: [NzModalService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

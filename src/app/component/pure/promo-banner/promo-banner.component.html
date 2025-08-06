@@ -1,0 +1,60 @@
+<section
+        *ngIf="show"
+        class="sticky top-0 z-40 w-full supports-blur border-b border-zinc-700/60
+         bg-zinc-800/85 backdrop-blur px-3 md:px-4"
+        role="region"
+        aria-label="FunPlayer for macOS"
+>
+    <div class="mx-auto max-w-6xl h-12 md:h-14 flex items-center gap-3">
+
+        <button type="button"
+                class="inline-flex rounded p-1 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-700/60
+                     focus:outline-none focus:ring-2 focus:ring-amber-400"
+                (click)="dismiss()" aria-label="Dismiss">
+            <i nz-icon nzType="close" nzTheme="outline" class="text-base leading-none"></i>
+        </button>
+
+        <img [src]="iconUrl" alt="FunPlayer app icon" class="h-7 w-7 md:h-9 md:w-9 rounded" decoding="async"/>
+
+        <div class="min-w-0 leading-tight">
+          <span class="truncate text-sm md:text-base text-zinc-100">
+            <span class="font-medium">FunPlayer</span>
+          </span>
+            <span class="block truncate text-xs text-[10px] md:text-xs text-zinc-400">
+            Our macOS app. On the Mac App Store.
+          </span>
+            <span class="sr-only">Our macOS app. On the Mac App Store.</span>
+        </div>
+
+        <div class="ml-auto flex items-center gap-2">
+
+            <button nz-button nzType="default" nzSize="small" class="!hidden md:!block !h-8 !text-xs"
+                    (click)="openInfo()" aria-label="Note from the creator">
+                Note from the creator
+            </button>
+
+            <a
+                    [href]="websiteUrl" target="_blank" rel="noreferrer">
+                <button nz-button nzType="primary" nzSize="small" class="!h-7 !text-xs" aria-label="View App">
+                    View App
+                </button>
+            </a>
+        </div>
+    </div>
+</section>
+
+<ng-template #infoTpl>
+    <p class="text-sm leading-6">
+        Hello, it's me <a href="https://discuss.eroscripts.com/u/amango134" target="_blank"> amango134</a>. I created this site some time
+        ago because I wanted to use my iPad and Kiiroo Keon together.
+    </p>
+    <p>
+        Now, after lots of time in development, I'm happy to introduce a native Mac script player called <b>FunPlayer</b>. If you are an Apple user, I
+        trust you won't regret checking this out.
+    </p>
+    <p>
+        It syncs your videos with funscripts and supports <b><span class="whitespace-nowrap">The Handy</span></b> over Wi-Fi and many <b>
+        Bluetooth devices</b> via Intiface.
+    <p>
+    </p>
+</ng-template>
