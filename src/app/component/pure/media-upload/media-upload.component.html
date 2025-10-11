@@ -8,7 +8,7 @@
   <div>
     <nz-upload
       nzType="drag"
-      nzAccept="audio/*,video/*"
+      nzAccept="audio/*,video/*,.mp3,.mp4,.m4a,.wav,.ogg,.webm,.mpeg,.mpga"
       [nzCustomRequest]="customRequest"
       [nzShowUploadList]="false"
       (nzChange)="handleFileUpload($event)"
